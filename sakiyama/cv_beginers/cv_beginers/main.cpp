@@ -7,11 +7,36 @@
 //
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include "lesson1.hpp"
+
+bool validate(int argc, const char * argv[]){
+  bool rtn = true;
+  
+  if(argc < 3){
+    std::cout << "invalid input" << std::endl;
+    std::cout << "exec lesson_number section_number ..." << std::endl;
+    rtn = false;
+  }
+  
+  return rtn;
+}
+
 
 int main(int argc, const char * argv[]) {
-  cv::Mat test;
-  // insert code here...
-  std::cout << "Hello, World!\n";
+    
+  if(!validate(argc, argv)){
     return 0;
+  }
+  
+  int lessonNumber = atoi(argv[1]);
+  
+  switch (lessonNumber) {
+    case 1:
+      lesson1::exec(argc, argv);
+      break;
+    default:
+      break;
+  }
+  
+  return 0;
 }

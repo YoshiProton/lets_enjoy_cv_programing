@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "2D935B56CF871DED3513D758412CC4ECBCF520BC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "AEF0685F7C4F0690F91E1D92E15E17CC5A5C208C" : 0,
+    "2D935B56CF871DED3513D758412CC4ECBCF520BC" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "87FC9A98-F3DD-4813-8488-4E1B5C6747EF",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "AEF0685F7C4F0690F91E1D92E15E17CC5A5C208C" : "..",
+    "2D935B56CF871DED3513D758412CC4ECBCF520BC" : "prgm\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "cv_beginers",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "sakiyama\/cv_beginers\/cv_beginers.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/sakiyamaK\/lets_enjoy_cv_programing.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2D935B56CF871DED3513D758412CC4ECBCF520BC"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/sakiyamaK\/study.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "AEF0685F7C4F0690F91E1D92E15E17CC5A5C208C"
+    }
+  ]
+}
