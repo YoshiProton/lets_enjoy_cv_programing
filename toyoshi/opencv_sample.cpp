@@ -21,8 +21,15 @@ int main( int argc, char** argv )
       return -1;
     }
 
-  namedWindow( "Display window", WINDOW_AUTOSIZE );
-  imshow( "Display window", image );
+  Mat grayImage;
+  cvtColor(image, grayImage, CV_BGR2GRAY );
+
+  Mat resizeImage;
+  resize(image, resizeImage, Size(), 2.0, 2.0, INTER_NEAREST);
+
+  imshow("Orig Image", image);
+  imshow("Gray Image", grayImage);
+  imshow("Resized Image", resizeImage);
 
   waitKey(0);
   return 0;
