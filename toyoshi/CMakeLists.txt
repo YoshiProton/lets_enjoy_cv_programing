@@ -21,8 +21,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -pg")
 # ビルドのタイプはリリース
 #SET(CMAKE_BUILD_TYPE Release)
 SET(CMAKE_BUILD_TYPE Debug)
-# 環境変数の登録
-
 
 # プロジェクト名
 PROJECT(cv_shokyu)
@@ -53,9 +51,9 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 LINK_DIRECTORIES("/usr/local/lib")
 
 # 実行ファイルを生成
-ADD_EXECUTABLE(cv_shokyu opencv_sample.cpp)# ${RANDOM_FOREST})
+ADD_EXECUTABLE(cv_shokyu opencv_sample.cpp)
 
 # ライブラリとリンクする
-TARGET_LINK_LIBRARIES(cv_shokyu HFMD_core ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} )
+TARGET_LINK_LIBRARIES(cv_shokyu ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} )
 # バージョン番号の適用
 # SET_TARGET_PROPERTIES(cv_shokyu PROPERTIES VERSION ${serial})
