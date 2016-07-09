@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
   std::string lessonNumber = "1";
   std::string sectionNumber = "2";
   
-  std::string dir = "/Users/sakiyamaK/Documents/study/lets_enjoy_cv_programing/prgm/_lesson/20160709";
+  std::string dir = "/Users/sakiyamaK/Documents/study/lets_enjoy_cv_programing/_lesson/20160709";
   
   std::string fileName = "lena.jpg";
   std::string fullPath = dir + "/" + fileName;
