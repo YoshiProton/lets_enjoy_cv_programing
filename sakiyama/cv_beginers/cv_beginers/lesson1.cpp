@@ -12,69 +12,107 @@
 #include <opencv2/opencv.hpp>
 
 namespace lesson1 {
-
-  bool validate(int argc, const char * argv[]){
-    bool rtn = true;
     
-    if(argc < 4){
-      std::cout << "invalid input" << std::endl;
-      std::cout << "exec lesson_number section_number(1~5) input_file_full_path save_file_full_path" << std::endl;
-      rtn = false;
-    }
-    
-    return rtn;
-  }
-  
   void section1(const std::string &fileName){
-    cv::Mat mat = Util::loadImage(fileName);
+    
+    std::cout << "section 1" << std::endl;
+
+    //バリデーション
+    if(fileName.empty() || fileName.length() == 0){
+      std::cout << "invalid input" << std::endl;
+      std::cout << "exec lesson_number section_number(1~5) input_file_full_path" << std::endl;
+      return;
+    }
+
+    cv::Mat mat;
+    if(!Util::loadMat(fileName, mat)) return;
+
     cv::imshow("lesson1-1", mat);
     cv::waitKey();
   }
 
-  void section2(const std::string &fileName, const std::string $saveFileName){
+  void section2(const std::string &fileName, const std::string &saveFileName){
+    
+    std::cout << "section 2" << std::endl;
+    
+    //バリデーション
+    if(fileName.empty() || fileName.length() == 0 ||
+       saveFileName.empty() || saveFileName.length() == 0){
+      std::cout << "invalid input" << std::endl;
+      std::cout << "exec lesson_number section_number(1~5) input_file_full_path save_file_full_path" << std::endl;
+      return;
+    }
 
-    cv::Mat loadImage = cv::imread(fileName);
+    cv::Mat mat;
+    if(!Util::loadMat(fileName, mat)) return;
     
-    cv::Mat saveImage;
-    cv::cvtColor(loadImage, saveImage, cv::COLOR_BGR2GRAY);
+    cv::Mat saveMat;
+    cv::cvtColor(mat, saveMat, cv::COLOR_BGR2GRAY);
     
-    if(!cv::imwrite($saveFileName, saveImage)){
-      std::cout << "save error!! : " << $saveFileName << std::endl;
+    if(!cv::imwrite(saveFileName, saveMat)){
+      std::cout << "save error!! : " << saveFileName << std::endl;
     }
   }
 
-  void section3(const std::string &fileName, const std::string $saveFileName){
+  void section3(const std::string &fileName, const std::string saveFileName){
     
-    cv::Mat loadImage = cv::imread(fileName);
+    std::cout << "section 3" << std::endl;
+
+    //バリデーション
+    if(fileName.empty() || fileName.length() == 0 ||
+       saveFileName.empty() || saveFileName.length() == 0){
+      std::cout << "invalid input" << std::endl;
+      std::cout << "exec lesson_number section_number(1~5) input_file_full_path save_file_full_path" << std::endl;
+      return;
+    }
+
+    cv::Mat mat;
+    if(!Util::loadMat(fileName, mat)) return;
+
+    std::cout << mat.channels() << std::endl;
     
-    cv::Mat saveImage(loadImage.cols, loadImage.rows, CV_32FC(loadImage.channels()));
+    cv::Mat saveMat(mat.cols, mat.rows, CV_8UC(mat.channels()));
     
-    for(int i = 0 ; i < loadImage.rows ; i++){
-      for(int j = 0; j < loadImage.cols ; j++){
+    for(int i = 0 ; i < mat.rows ; i++){
+      for(int j = 0; j < mat.cols ; j++){
         int color = 0;
-        for(int c = 0 ; c < loadImage.channels(); c++){
-          u_long p = i * loadImage.step + j * loadImage.elemSize() + c;
-          color += loadImage.data[p];
+        for(int c = 0 ; c < mat.channels(); c++){
+          u_long p = i * mat.step + j * mat.elemSize() + c;
+          color += mat.data[p];
         }
-        color /= loadImage.channels();
+        color /= mat.channels();
         
-        for(int c = 0 ; c < saveImage.channels(); c++){
-          u_long p = i * loadImage.step + j * loadImage.elemSize() + c;
-          saveImage.data[p] = color;
+        for(int c = 0 ; c < saveMat.channels(); c++){
+          u_long p = i * mat.step + j * mat.elemSize() + c;
+          saveMat.data[p] = color;
         }
       }
     }
     
-    if(!cv::imwrite($saveFileName, saveImage)){
-      std::cout << "save error!! : " << $saveFileName << std::endl;
+    if(!cv::imwrite(saveFileName, saveMat)){
+      std::cout << "save error!! : " << saveFileName << std::endl;
     }
+  }
+  
+  void section4(const std::string &fileName, const std::string saveFileName){
+  
+    std::cout << "section 3" << std::endl;
+    
+    //バリデーション
+    if(fileName.empty() || fileName.length() == 0 ||
+       saveFileName.empty() || saveFileName.length() == 0){
+      std::cout << "invalid input" << std::endl;
+      std::cout << "exec lesson_number section_number(1~5) input_file_full_path save_file_full_path" << std::endl;
+      return;
+    }
+    
+    cv::Mat mat;
+    if(!Util::loadMat(fileName, mat)) return;
+
   }
 
 
   void exec(int argc, const char * argv[]){
-    if(!validate(argc, argv)){
-      return;
-    }
     
     int sectionNumber = atoi(argv[2]);
     std::string inputFileFullPath = std::string(argv[3]);
@@ -86,8 +124,10 @@ namespace lesson1 {
         break;
       case 2:
         section2(inputFileFullPath, saveFileFullPath);
+        break;
       case 3:
         section3(inputFileFullPath, saveFileFullPath);
+        break;
       default:
         //エラーハンドリング
         break;

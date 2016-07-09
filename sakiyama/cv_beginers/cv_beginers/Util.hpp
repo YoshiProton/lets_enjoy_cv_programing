@@ -12,7 +12,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-namespace Util{
-  cv::Mat loadImage(const std::string &fileName);
+namespace Util {
+  bool loadMat(const std::string &fileName, cv::Mat &mat, int flags=1);
 }
 #endif /* Util_hpp */

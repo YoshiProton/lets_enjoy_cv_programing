@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B665514D1D300A7700DB9856 /* lesson1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B665514B1D300A7700DB9856 /* lesson1.cpp */; };
-		B66551501D300D9300DB9856 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B665514E1D300D9300DB9856 /* Util.cpp */; };
+		B66551551D308F0A00DB9856 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B66551531D308F0A00DB9856 /* Util.cpp */; };
 		B684035F1D1FEF67008D1BA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B684035E1D1FEF67008D1BA6 /* main.cpp */; };
 		B6846D271D1FF543008D1BA6 /* libopencv_calib3d.2.4.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6846D151D1FF53C008D1BA6 /* libopencv_calib3d.2.4.12.dylib */; };
 		B6846D281D1FF543008D1BA6 /* libopencv_contrib.2.4.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6846D161D1FF53C008D1BA6 /* libopencv_contrib.2.4.12.dylib */; };
@@ -45,8 +45,8 @@
 /* Begin PBXFileReference section */
 		B665514B1D300A7700DB9856 /* lesson1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lesson1.cpp; sourceTree = "<group>"; };
 		B665514C1D300A7700DB9856 /* lesson1.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lesson1.hpp; sourceTree = "<group>"; };
-		B665514E1D300D9300DB9856 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
-		B665514F1D300D9300DB9856 /* Util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Util.hpp; sourceTree = "<group>"; };
+		B66551531D308F0A00DB9856 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		B66551541D308F0A00DB9856 /* Util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Util.hpp; sourceTree = "<group>"; };
 		B684035B1D1FEF67008D1BA6 /* cv_beginers */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cv_beginers; sourceTree = BUILT_PRODUCTS_DIR; };
 		B684035E1D1FEF67008D1BA6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B6846D151D1FF53C008D1BA6 /* libopencv_calib3d.2.4.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.12.dylib; path = /usr/local/Cellar/opencv/2.4.12_2/lib/libopencv_calib3d.2.4.12.dylib; sourceTree = "<absolute>"; };
@@ -129,8 +129,8 @@
 			children = (
 				B665514A1D300A6600DB9856 /* lesson1 */,
 				B684035E1D1FEF67008D1BA6 /* main.cpp */,
-				B665514E1D300D9300DB9856 /* Util.cpp */,
-				B665514F1D300D9300DB9856 /* Util.hpp */,
+				B66551531D308F0A00DB9856 /* Util.cpp */,
+				B66551541D308F0A00DB9856 /* Util.hpp */,
 			);
 			path = cv_beginers;
 			sourceTree = "<group>";
@@ -217,7 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B66551501D300D9300DB9856 /* Util.cpp in Sources */,
+				B66551551D308F0A00DB9856 /* Util.cpp in Sources */,
 				B684035F1D1FEF67008D1BA6 /* main.cpp in Sources */,
 				B665514D1D300A7700DB9856 /* lesson1.cpp in Sources */,
 			);
@@ -263,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = "/usr/local/Cellar/**";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -302,7 +302,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = "/usr/local/Cellar/**";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
