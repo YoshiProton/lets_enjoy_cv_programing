@@ -3,7 +3,7 @@
 
 using namespace cv;
 
-inline void my_grayscale(cv::Mat image, cv::Mat out)
+inline void my_grayscale(const cv::Mat image, cv::Mat out)
 {
 	for (int y = 0; y < image.rows; y++)
 	{
@@ -25,13 +25,13 @@ inline void my_grayscale(cv::Mat image, cv::Mat out)
 }
 
 
-inline void my_resize2(cv::Mat image, cv::Mat out)
+inline void my_resizeNN(const cv::Mat image, cv::Mat out, const double scale)
 {
-	for (int y = 0; y < image.rows * 2; y++)
+	for (int y = 0; y < image.rows * scale; y++)
 	{
-		for (int x = 0; x < image.cols * 2; x++)
+		for (int x = 0; x < image.cols * scale; x++)
 		{
-			cv::Vec3b vec = image.at<cv::Vec3b>(y / 2, x / 2);
+			cv::Vec3b vec = image.at<cv::Vec3b>((int)((double)y / scale), (int)((double)x / scale));
 
 			out.at<cv::Vec3b>(y, x) = vec;
 		}
