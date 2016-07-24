@@ -1,8 +1,11 @@
 #include <iostream>
+#include <vector>
 #include <opencv2/opencv.hpp>
+#include <toyocv/imgproc.hpp>
 
 using namespace std;
 using namespace cv;
+
 
 int main( int argc, char** argv )
 {
@@ -24,11 +27,15 @@ int main( int argc, char** argv )
   Mat grayImage;
   cvtColor(image, grayImage, CV_BGR2GRAY );
 
+  Mat myGrayImage;
+  myCvtColor(image, myGrayImage);
+
   Mat resizeImage;
   resize(image, resizeImage, Size(), 2.0, 2.0, INTER_NEAREST);
 
   imshow("Orig Image", image);
   imshow("Gray Image", grayImage);
+  imshow("Gray Image", myGrayImage);
   imshow("Resized Image", resizeImage);
 
   waitKey(0);
