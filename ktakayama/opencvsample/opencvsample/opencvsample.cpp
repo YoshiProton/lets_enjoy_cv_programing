@@ -16,7 +16,7 @@ int main()
 	my_grayscale(input, gray_own);
 
 	cv::resize(input, scale_cv, cv::Size(0, 0), 2.0, 2.0, INTER_NEAREST);
-	my_resize2(input, scale_own);
+	my_resizeNN(input, scale_own, 2.0);
 
 	// cv::imshow("", input);
 	cv::imwrite("lena.jpg", input);
