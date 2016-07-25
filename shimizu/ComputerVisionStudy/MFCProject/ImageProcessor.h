@@ -4,20 +4,20 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
 
-enum ProcessMethod { None, FullOpenCV, HalfOpenCV, FullScratch };
 
 class CImageProcessor
 {
-protected:
-	ProcessMethod processMethod;
-	std::string filePath;
-
 public:
 	CImageProcessor();
 	~CImageProcessor();
 
-	void SetProcessMethod(ProcessMethod);
-	virtual void Execute(std::string) = 0;
+protected:
+	void ShowPictureDlg(cv::Mat);
+	void ShowPictureDlg(LPCOLORREF, BITMAPINFO*);
+	void GetNewFilePath(LPSTR, LPSTR, LPSTR);
+	std::string GetMultiBytePath(CString);
 };
 

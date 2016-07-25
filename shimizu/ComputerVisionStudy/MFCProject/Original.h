@@ -1,5 +1,6 @@
 #pragma once
 #include "ImageProcessor.h"
+
 class COriginal :
 	public CImageProcessor
 {
@@ -7,6 +8,8 @@ public:
 	COriginal();
 	~COriginal();
 
-	void Execute(std::string);
+	void ProcessFullOpenCV(CString);
+	//void ProcessHalfOpenCV(CString);
+	void ProcessFullScratch(LPCOLORREF, BITMAPINFO*);
 };
 

@@ -4,6 +4,7 @@
 
 #pragma once
 #include <string> 
+#include "afxwin.h"
 
 // CMainDlg ダイアログ
 class CMainDlg : public CDialogEx
@@ -11,6 +12,7 @@ class CMainDlg : public CDialogEx
 // コンストラクション
 public:
 	CMainDlg(CWnd* pParent = NULL);	// 標準コンストラクター
+	~CMainDlg();
 
 // ダイアログ データ
 #ifdef AFX_DESIGN_TIME
@@ -33,7 +35,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	std::string filePath;
+	CImage image;
+	CString filePath;
+	LPCOLORREF lpcrPixelData;
+	BITMAPINFO bmpInfo;
+	UINT WIDTH;
+	UINT HEIGHT;
+	void LoadImage(HDC);
+	void ShowImage(HDC);
 
 public:
 	afx_msg void OnMenuExit();
@@ -41,7 +50,8 @@ public:
 	afx_msg void OnMenuSave();
 	afx_msg void OnMenuAbout();
 
-	afx_msg void OnMenuOriginal();
+	afx_msg void OnMenuOriginalFullOpenCV();
+	afx_msg void OnMenuOriginalScratch();
 
 	afx_msg void OnMenuGrayscaleFullOpenCV();
 	afx_msg void OnMenuGrayscaleHalfOpenCV();

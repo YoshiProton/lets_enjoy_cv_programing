@@ -19,7 +19,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // アプリケーションのバージョン情報に使われる CAboutDlg ダイアログ
 
 class CAboutDlg : public CDialogEx
@@ -27,12 +26,12 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// ダイアログ データ
+	// ダイアログ データ
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV サポート
 
 // 実装
@@ -55,12 +54,15 @@ END_MESSAGE_MAP()
 
 // CMainDlg ダイアログ
 
-
-
 CMainDlg::CMainDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_MFCPROJECT_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+CMainDlg::~CMainDlg()
+{
+	delete[] lpcrPixelData;
 }
 
 void CMainDlg::DoDataExchange(CDataExchange* pDX)
@@ -76,7 +78,8 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_COMMAND(ID_MENU_OPEN, &CMainDlg::OnMenuOpen)
 	ON_COMMAND(ID_MENU_SAVE, &CMainDlg::OnMenuSave)
 	ON_COMMAND(ID_MENU_ABOUT, &CMainDlg::OnMenuAbout)
-	ON_COMMAND(ID_MENU_ORIGINAL, &CMainDlg::OnMenuOriginal)
+	ON_COMMAND(ID_MENU_ORIGINAL_FULLOCV, &CMainDlg::OnMenuOriginalFullOpenCV)
+	ON_COMMAND(ID_MENU_ORIGINAL_SCRATCH, &CMainDlg::OnMenuOriginalScratch)
 	ON_COMMAND(ID_MENU_GRAYSCALE_FULLOCV, &CMainDlg::OnMenuGrayscaleFullOpenCV)
 	ON_COMMAND(ID_MENU_GRAYSCALE_HALFOCV, &CMainDlg::OnMenuGrayscaleHalfOpenCV)
 	ON_COMMAND(ID_MENU_GRAYSCALE_SCRATCH, &CMainDlg::OnMenuGrayscaleScratch)
@@ -118,7 +121,6 @@ BOOL CMainDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 小さいアイコンの設定
 
 	// TODO: 初期化をここに追加します。
-	filePath = "lena.jpg";
 
 	return TRUE;  // フォーカスをコントロールに設定した場合を除き、TRUE を返します。
 }
@@ -161,6 +163,13 @@ void CMainDlg::OnPaint()
 	}
 	else
 	{
+		if (!filePath.IsEmpty())
+		{
+			CPaintDC dc(this);
+			this->LoadImage(dc);
+			this->ShowImage(dc);
+		}
+
 		CDialogEx::OnPaint();
 	}
 }
@@ -172,106 +181,259 @@ HCURSOR CMainDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+///<summary>
+///ファイルから画像を読み込んでメンバの配列とBITMAPINFOに値を設定
+///</summary>
+void CMainDlg::LoadImage(HDC hdc)
+{
+	CImage image;
+	image.Load(filePath);
+
+	WIDTH = image.GetWidth();
+	HEIGHT = image.GetHeight();
+
+	if (sizeof(lpcrPixelData) > 0)
+		delete[] lpcrPixelData;
+
+	lpcrPixelData = new COLORREF[WIDTH * HEIGHT];
+
+	HBITMAP hBitmap = (HBITMAP)image;
+
+	bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmpInfo.bmiHeader.biWidth = WIDTH;
+	bmpInfo.bmiHeader.biHeight = -(INT)HEIGHT;
+	bmpInfo.bmiHeader.biPlanes = 1;
+	bmpInfo.bmiHeader.biBitCount = 32;
+	bmpInfo.bmiHeader.biCompression = BI_RGB;
+
+	GetDIBits(hdc, hBitmap, 0, HEIGHT, lpcrPixelData, &bmpInfo, DIB_RGB_COLORS);
+
+	if (image)
+	{
+		DeleteObject(hBitmap);
+		image.Detach();
+		image.Destroy();
+	}
+}
+
+
+///<summary>
+///メンバの配列とBITMAPINFOを使用して画像を表示
+///</summary>
+void CMainDlg::ShowImage(HDC hdc)
+{
+	SetDIBitsToDevice(hdc, 0, 0, WIDTH, HEIGHT, 0, 0, 0, HEIGHT, lpcrPixelData, &bmpInfo, DIB_RGB_COLORS);
+}
+
+
 #pragma region 画像処理以外のメニュー選択イベント
+
+///<summary>
+///終了メニュー選択
+///</summary>
 void CMainDlg::OnMenuExit()
 {
 	OnOK();
 	//OnCancel();
 }
 
-//ファイルを開くメニュー選択
+///<summary>
+///ファイルを開くメニュー選択
+///</summary>
 void CMainDlg::OnMenuOpen()
 {
-	CBitmap bmp;
-	CImage image;
-	image.Load(_T("lena.jpg"));
-	bmp.Attach(image.Detach());
-	CStatic* pictbox = (CStatic*)GetDlgItem(IDC_STATIC_PICTURE);
-	pictbox->SetBitmap(bmp);
+	CString filter("JPEG Files (*.jpg;*.jpeg)|*.jpg; *.jpeg|PNG Files (*.png)|*.png|BMP Files (*.bmp)|*.bmp||");
+	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, filter);
+	if (fileDlg.DoModal() == IDOK)
+	{
+		filePath = fileDlg.GetPathName();
 
-	//配列に変換
-	//http://killswitch5375.hatenablog.com/entry/20100601/p1
-	//HBITMAP hBitmap = (HBITMAP)image;
-	//GetBitmapBits(hBitmap, size, buff);
-	//HDC hdc = image.GetDC();
-	//image.ReleaseDC();
-	image.Destroy();
+		Invalidate(TRUE);
+
+		UpdateData(FALSE);
+	}
 }
 
-//ファイルを保存メニュー選択
+///<summary>
+///ファイルを保存メニュー選択
+///</summary>
 void CMainDlg::OnMenuSave()
 {
+	CString filter("JPEG Files (*.jpg;*.jpeg)|*.jpg; *.jpeg|PNG Files (*.png)|*.png|BMP Files (*.bmp)|*.bmp||");
+	CFileDialog fileDlg(FALSE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, filter);
+	if (fileDlg.DoModal() == IDOK)
+	{
 
+		UpdateData(FALSE);
+	}
 }
 
-//アバウトメニュ選択
+///<summary>
+///アバウトメニュ選択
+///</summary>
 void CMainDlg::OnMenuAbout()
 {
 	CAboutDlg dlgAbout;
 	dlgAbout.DoModal();
 }
+
 #pragma endregion
+
 
 #pragma region 画像処理メニュー選択イベント
 
 #pragma region 元画像をそのまま表示
-void CMainDlg::OnMenuOriginal()
+
+///<summary>
+///OpenCVを活用して簡単実装
+///</summary>
+void CMainDlg::OnMenuOriginalFullOpenCV()
 {
-	COriginal process;
-	process.Execute(filePath);
-}
+#pragma region
+	///*
+	//Transformation of OpenCV image to MFC image in MSVC project
+	//http://kvy.com.ua/transformation-of-opencv-image-to-mfc-image-in-msvc-project/
+	//*/
+	//cv::Mat m_matCVImg = cv::imread(filePath);
+	//cv::Size size;
+
+	//////1. Define MFC window size :
+	////RECT r;
+	////pictureCtrl.GetClientRect(&r);
+	////size = cv::Size(r.right, r.bottom);
+
+	//size = m_matCVImg.size();
+
+	//////2. The size of m_matCVImg is not always the same as an MFC window’s :
+	////cv::Mat matImgTmp;
+	////if (m_matCVImg.size() != size)
+	////{
+	////	matImgTmp = cv::Mat(size, CV_8UC3);
+	////	cv::resize(m_matCVImg, matImgTmp, size, 0, 0, cv::INTER_AREA);
+	////}
+	////else
+	////{
+	////	matImgTmp = m_matCVImg.clone();
+	////}
+
+	////3. Rotate the image :
+	//cv::flip(m_matCVImg, m_matCVImg, 0);
+
+	////4. Create an MFC image :
+	//CImage* image = new CImage;
+	//image->Create(size.width, size.height, 24);
+
+	////5. For image you need a header.Create it by using BITMAPINFO structure
+	//BITMAPINFO bitInfo;
+	//bitInfo.bmiHeader.biBitCount = 24;
+	//bitInfo.bmiHeader.biWidth = size.width;
+	//bitInfo.bmiHeader.biHeight = size.height;
+	//bitInfo.bmiHeader.biPlanes = 1;
+	//bitInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	//bitInfo.bmiHeader.biCompression = BI_RGB;
+	//bitInfo.bmiHeader.biClrImportant =
+	//bitInfo.bmiHeader.biClrUsed =
+	//bitInfo.bmiHeader.biSizeImage =
+	//bitInfo.bmiHeader.biXPelsPerMeter =
+	//bitInfo.bmiHeader.biYPelsPerMeter = 0;
+	//
+	////6. Add header and OpenCV image’s data to image
+	//StretchDIBits(
+	//	image->GetDC(), 0, 0,
+	//	size.width, size.height, 0, 0,
+	//	size.width, size.height,
+	//	m_matCVImg.data, &bitInfo, DIB_RGB_COLORS, SRCCOPY);
+
+	////7. Display image in MFC window
+	//image->BitBlt(::GetDC(pictureCtrl.m_hWnd), 0, 0);
+
+	////8. (Optional)Release image, if you will not use it :
+	//if (image)
+	//{
+	//	image->ReleaseDC();
+	//	delete image;
+	//	image = NULL;
+	//}
 #pragma endregion
 
+	COriginal process;
+	process.ProcessFullOpenCV(filePath);
+}
+
+///<summary>
+///OpenCVを全く使わずにフルスクラッチ
+///</summary>
+void CMainDlg::OnMenuOriginalScratch()
+{
+	COriginal process;
+	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
+}
+
+#pragma endregion
+
+
 #pragma region グレイスケール化
-//OpenCVを活用して簡単実装
+
+///<summary>
+///OpenCVを活用して簡単実装
+///</summary>
 void CMainDlg::OnMenuGrayscaleFullOpenCV()
 {
 	CGrayscale process;
-	process.SetProcessMethod(ProcessMethod::FullOpenCV);
-	process.Execute(filePath);
+	process.ProcessFullOpenCV(filePath);
 }
 
-//画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+///<summary>
+///画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+///</summary>
 void CMainDlg::OnMenuGrayscaleHalfOpenCV()
 {
 	CGrayscale process;
-	process.SetProcessMethod(ProcessMethod::HalfOpenCV);
-	process.Execute(filePath);
+	process.ProcessHalfOpenCV(filePath);
 }
 
-//OpenCVを全く使わずにフルスクラッチ
+///<summary>
+///OpenCVを全く使わずにフルスクラッチ
+///</summary>
 void CMainDlg::OnMenuGrayscaleScratch()
 {
 	CGrayscale process;
-	process.SetProcessMethod(ProcessMethod::FullScratch);
-	process.Execute(filePath);
+	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
 }
+
 #pragma endregion
 
+
 #pragma region リサイズ
-//OpenCVを活用して簡単実装
+
+///<summary>
+///OpenCVを活用して簡単実装
+///</summary>
 void CMainDlg::OnMenuResizeFullOpenCV()
 {
 	CResize process;
-	process.SetProcessMethod(ProcessMethod::FullOpenCV);
-	process.Execute(filePath);
+	process.ProcessFullOpenCV(filePath);
 }
 
-//画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+///<summary>
+///画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+///</summary>
 void CMainDlg::OnMenuResizeHalfOpenCV()
 {
 	CResize process;
-	process.SetProcessMethod(ProcessMethod::HalfOpenCV);
-	process.Execute(filePath);
+	process.ProcessHalfOpenCV(filePath);
 }
 
-//OpenCVを全く使わずにフルスクラッチ
+///<summary>
+///OpenCVを全く使わずにフルスクラッチ
+///</summary>
 void CMainDlg::OnMenuResizeScratch()
 {
 	CResize process;
-	process.SetProcessMethod(ProcessMethod::FullScratch);
-	process.Execute(filePath);
+	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
 }
+
 #pragma endregion
 
 #pragma endregion

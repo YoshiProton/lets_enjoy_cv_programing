@@ -7,11 +7,8 @@ public:
 	CResize();
 	~CResize();
 
-	void Execute(std::string);
-
-private:
-	void ProcessFullOpenCV();
-	void ProcessHalfOpenCV();
-	void ProcessFullScratch();
+	void ProcessFullOpenCV(CString);
+	void ProcessHalfOpenCV(CString);
+	void ProcessFullScratch(LPCOLORREF, BITMAPINFO*);
 };
 
