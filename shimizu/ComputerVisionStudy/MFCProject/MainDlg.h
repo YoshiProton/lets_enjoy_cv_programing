@@ -37,7 +37,7 @@ protected:
 private:
 	CImage image;
 	CString filePath;
-	LPCOLORREF lpcrPixelData;
+	LPCOLORREF pixelData;
 	BITMAPINFO bmpInfo;
 	UINT WIDTH;
 	UINT HEIGHT;

@@ -62,7 +62,7 @@ CMainDlg::CMainDlg(CWnd* pParent /*=NULL*/)
 
 CMainDlg::~CMainDlg()
 {
-	delete[] lpcrPixelData;
+	delete[] pixelData;
 }
 
 void CMainDlg::DoDataExchange(CDataExchange* pDX)
@@ -193,10 +193,10 @@ void CMainDlg::LoadImage(HDC hdc)
 	WIDTH = image.GetWidth();
 	HEIGHT = image.GetHeight();
 
-	if (sizeof(lpcrPixelData) > 0)
-		delete[] lpcrPixelData;
+	if (sizeof(pixelData) > 0)
+		delete[] pixelData;
 
-	lpcrPixelData = new COLORREF[WIDTH * HEIGHT];
+	pixelData = new COLORREF[WIDTH * HEIGHT];
 
 	HBITMAP hBitmap = (HBITMAP)image;
 
@@ -207,7 +207,7 @@ void CMainDlg::LoadImage(HDC hdc)
 	bmpInfo.bmiHeader.biBitCount = 32;
 	bmpInfo.bmiHeader.biCompression = BI_RGB;
 
-	GetDIBits(hdc, hBitmap, 0, HEIGHT, lpcrPixelData, &bmpInfo, DIB_RGB_COLORS);
+	GetDIBits(hdc, hBitmap, 0, HEIGHT, pixelData, &bmpInfo, DIB_RGB_COLORS);
 
 	if (image)
 	{
@@ -223,7 +223,7 @@ void CMainDlg::LoadImage(HDC hdc)
 ///</summary>
 void CMainDlg::ShowImage(HDC hdc)
 {
-	SetDIBitsToDevice(hdc, 0, 0, WIDTH, HEIGHT, 0, 0, 0, HEIGHT, lpcrPixelData, &bmpInfo, DIB_RGB_COLORS);
+	SetDIBitsToDevice(hdc, 0, 0, WIDTH, HEIGHT, 0, 0, 0, HEIGHT, pixelData, &bmpInfo, DIB_RGB_COLORS);
 }
 
 
@@ -367,7 +367,7 @@ void CMainDlg::OnMenuOriginalFullOpenCV()
 void CMainDlg::OnMenuOriginalScratch()
 {
 	COriginal process;
-	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
+	process.ProcessFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion
@@ -399,7 +399,7 @@ void CMainDlg::OnMenuGrayscaleHalfOpenCV()
 void CMainDlg::OnMenuGrayscaleScratch()
 {
 	CGrayscale process;
-	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
+	process.ProcessFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion
@@ -431,7 +431,7 @@ void CMainDlg::OnMenuResizeHalfOpenCV()
 void CMainDlg::OnMenuResizeScratch()
 {
 	CResize process;
-	process.ProcessFullScratch(lpcrPixelData, &bmpInfo);
+	process.ProcessFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion

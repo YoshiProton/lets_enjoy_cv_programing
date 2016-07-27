@@ -37,7 +37,7 @@ std::string CImageProcessor::GetMultiBytePath(CString filePath)
 ///<summary>
 ///	LPCOLORREFの画像データ配列をMFCのCImage型オブジェクトに変換してダイアログ表示
 ///</summary>
-void CImageProcessor::ShowPictureDlg(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpInfo)
+void CImageProcessor::ShowPictureDlg(LPCOLORREF pixelData, BITMAPINFO* bmpInfo)
 {
 	CImage* image = new CImage;
 	image->Create(bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight, bmpInfo->bmiHeader.biBitCount);
@@ -46,7 +46,7 @@ void CImageProcessor::ShowPictureDlg(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpIn
 		image->GetDC(), 0, 0,
 		bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight, 0, 0,
 		bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight,
-		lpcrPixelData, bmpInfo, DIB_RGB_COLORS, SRCCOPY);
+		pixelData, bmpInfo, DIB_RGB_COLORS, SRCCOPY);
 
 	CPictureDlg dlg(image);
 	dlg.DoModal();

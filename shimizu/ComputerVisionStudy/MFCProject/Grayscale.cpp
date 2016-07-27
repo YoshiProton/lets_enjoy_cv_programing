@@ -83,25 +83,25 @@ void CGrayscale::ProcessHalfOpenCV(CString filePath)
 ///<summary>
 ///	OpenCVを全く使わずにフルスクラッチ
 ///</summary>
-void CGrayscale::ProcessFullScratch(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpInfo)
+void CGrayscale::ProcessFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo)
 {
 	UINT WIDTH = bmpInfo->bmiHeader.biWidth;
 	UINT HEIGHT = -1 * bmpInfo->bmiHeader.biHeight;
 
 	BYTE byRed, byGreen, byBlue, byDensity;
-	LPCOLORREF lpcrPixelData2 = new COLORREF[WIDTH * HEIGHT];
+	LPCOLORREF dscPixelData = new COLORREF[WIDTH * HEIGHT];
 
 	for (int i = 0;i < WIDTH * HEIGHT; i++)
 	{
-		byRed = GetRValue(lpcrPixelData[i]);
-		byGreen = GetGValue(lpcrPixelData[i]);
-		byBlue = GetBValue(lpcrPixelData[i]);
+		byRed = GetRValue(srcPixelData[i]);
+		byGreen = GetGValue(srcPixelData[i]);
+		byBlue = GetBValue(srcPixelData[i]);
 
 		byDensity = (4 * byRed + 2 * byGreen + byBlue) / 7;
-		lpcrPixelData2[i] = RGB(byDensity, byDensity, byDensity);
+		dscPixelData[i] = RGB(byDensity, byDensity, byDensity);
 	}
 
-	ShowPictureDlg(lpcrPixelData2, bmpInfo);
+	ShowPictureDlg(dscPixelData, bmpInfo);
 
-	delete[] lpcrPixelData2;
+	delete[] dscPixelData;
 }

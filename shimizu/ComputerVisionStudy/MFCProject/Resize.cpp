@@ -29,12 +29,26 @@ void CResize::ProcessFullOpenCV(CString filePath)
 		return;
 	}
 
+	int selectedAlgorithm = 0;
+	switch (algorithm)
+	{
+	case 0:
+		selectedAlgorithm = cv::INTER_NEAREST;
+		break;
+	case 1:
+		selectedAlgorithm = cv::INTER_LINEAR;
+		break;
+	case 2:
+		selectedAlgorithm = cv::INTER_CUBIC;
+		break;
+	}
+
 	//元画像読み込み
 	cv::Mat image1 = cv::imread(path);
 
 	cv::Mat resizeImg;
 	//画像をリサイズする
-	cv::resize(image1, resizeImg, cv::Size(), ratio, ratio, algorithm);
+	cv::resize(image1, resizeImg, cv::Size(), ratio, ratio, selectedAlgorithm);
 	cv::namedWindow("リサイズ画像(resize関数)", cv::WINDOW_AUTOSIZE);
 	cv::imshow("リサイズ画像(resize関数)", resizeImg);
 
@@ -72,14 +86,14 @@ void CResize::ProcessHalfOpenCV(CString filePath)
 	int width = image1.cols;
 	int height = image1.rows;
 
-	int newWidth = width * ratio;
-	int newHeight = height * ratio;
+	int dscWidth = width * ratio;
+	int dscHeight = height * ratio;
 
-	cv::Mat image2 = cv::Mat(cv::Size(newWidth, newHeight), CV_8UC3);
+	cv::Mat image2 = cv::Mat(cv::Size(dscWidth, dscHeight), CV_8UC3);
 
-	for (int y = 0; y < newHeight; y++)
+	for (int y = 0; y < dscHeight; y++)
 	{
-		for (int x = 0; x < newWidth; x++)
+		for (int x = 0; x < dscWidth; x++)
 		{
 			int oldX = (int)(x / ratio);
 			int oldY = (int)(y / ratio);
@@ -93,17 +107,17 @@ void CResize::ProcessHalfOpenCV(CString filePath)
 			else
 			{
 				//Nearest neighbor
-				if (algorithm == 0)
+				if (algorithm == Algorithm::NearestNeighbor)
 				{
 					image2.at<cv::Vec3b>(y, x) = image1.at<cv::Vec3b>(oldY, oldX);
 				}
 				//Bilinear
-				else if (algorithm == 1)
+				else if (algorithm == Algorithm::Bilinear)
 				{
 					//TODO
 				}
 				//Bicubic
-				else if (algorithm == 2)
+				else if (algorithm == Algorithm::Bicubic)
 				{
 					//TODO
 				}
@@ -122,7 +136,7 @@ void CResize::ProcessHalfOpenCV(CString filePath)
 ///<summary>
 ///	OpenCVを全く使わずにフルスクラッチ
 ///</summary>
-void CResize::ProcessFullScratch(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpInfo)
+void CResize::ProcessFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo)
 {
 	double ratio = 1.0;
 	int algorithm = 0;
@@ -136,54 +150,148 @@ void CResize::ProcessFullScratch(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpInfo)
 	UINT width = bmpInfo->bmiHeader.biWidth;
 	UINT height = -1 * bmpInfo->bmiHeader.biHeight;
 
-	UINT newWidth = width * ratio;
-	UINT newHeight = height * ratio;
+	UINT dscWidth = width * ratio;
+	UINT dscHeight = height * ratio;
 
 	BITMAPINFO bmpInf;
 	bmpInf.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmpInf.bmiHeader.biWidth = newWidth;
-	bmpInf.bmiHeader.biHeight = -(INT)newHeight;
+	bmpInf.bmiHeader.biWidth = dscWidth;
+	bmpInf.bmiHeader.biHeight = -(INT)dscHeight;
 	bmpInf.bmiHeader.biPlanes = bmpInfo->bmiHeader.biPlanes;
 	bmpInf.bmiHeader.biBitCount = bmpInfo->bmiHeader.biBitCount;
 	bmpInf.bmiHeader.biCompression = bmpInfo->bmiHeader.biCompression;
 
-	LPCOLORREF lpcrPixelData2 = new COLORREF[newWidth * newHeight];
+	LPCOLORREF dscPixelData = new COLORREF[dscWidth * dscHeight];
 
-	for (int x = 0; x < newWidth; x++)
+	//原寸と縮小は補間の必要がないためNearest neighborで処理
+	if (ratio <= 1.0)
 	{
-		for (int y = 0; y < newHeight; y++)
+		ResizeByNearestNeighbor(width, height, dscWidth, dscHeight, ratio, srcPixelData, dscPixelData);
+	}
+	//拡大は各アルゴリズムで処理
+	else
+	{
+		//Nearest neighbor
+		if (algorithm == Algorithm::NearestNeighbor)
 		{
-			int newXY = x + y * newWidth;
-			int oldXY = (int)(x / ratio) + (int)(y / ratio) * width;
+			ResizeByNearestNeighbor(width, height, dscWidth, dscHeight, ratio, srcPixelData, dscPixelData);
+		}
+		//Bilinear
+		else if (algorithm == Algorithm::Bilinear)
+		{
+			ResizeByBilinear(width, height, dscWidth, dscHeight, ratio, srcPixelData, dscPixelData);
+		}
+		//Bicubic
+		else if (algorithm == Algorithm::Bicubic)
+		{
+			ResizeByBicubic(width, height, dscWidth, dscHeight, ratio, srcPixelData, dscPixelData);
+		}
+	}
 
-			//等倍および縮小は補間の必要がないためNearest neighborのみ
-			if (ratio <= 1.0)
+	ShowPictureDlg(dscPixelData, &bmpInf);
+
+	delete[] dscPixelData;
+}
+
+
+///<summary>
+///	Nearest neighbor
+///</summary>
+void CResize::ResizeByNearestNeighbor(UINT width, UINT height, UINT dscWidth, UINT dscHeight, double ratio, LPCOLORREF srcPixelData, LPCOLORREF dscPixelData)
+{
+	for (int x = 0; x < dscWidth; x++)
+	{
+		for (int y = 0; y < dscHeight; y++)
+		{
+			int dscPos = x + y * dscWidth;
+			int srcPos = (int)(x / ratio) + (int)(y / ratio) * width;
+
+			dscPixelData[dscPos] = srcPixelData[srcPos];
+		}
+	}
+}
+
+
+///<summary>
+///	Bilinear
+///</summary>
+void CResize::ResizeByBilinear(UINT width, UINT height, UINT dscWidth, UINT dscHeight, double ratio, LPCOLORREF srcPixelData, LPCOLORREF dscPixelData)
+{
+	for (int x = 0; x < width - 1; x++)
+	{
+		for (int y = 0; y < height - 1; y++)
+		{
+			int srcPos = x + y * width;//基準点
+
+			int srcPosH = (x + 1) + y * width;//右横のピクセルの位置
+			int srcPosV = x + (y + 1) * width;//真下のピクセルの位置
+
+			//RGB分解処理（符号が必要なのでintで計算して最後にBYTEにキャストする）
+			int red = (int)GetRValue(srcPixelData[srcPos]);
+			int green = (int)GetGValue(srcPixelData[srcPos]);
+			int blue = (int)GetBValue(srcPixelData[srcPos]);
+
+			//基準点と右横のピクセルとの差をRGBで
+			int diffRH = (int)GetRValue(srcPixelData[srcPosH]) - red;
+			int diffHG = (int)GetGValue(srcPixelData[srcPosH]) - green;
+			int diffHB = (int)GetBValue(srcPixelData[srcPosH]) - blue;
+
+			//基準点と真下のピクセルとの差をRGBで
+			int diffRV = (int)GetRValue(srcPixelData[srcPosV]) - red;
+			int diffVG = (int)GetGValue(srcPixelData[srcPosV]) - green;
+			int diffVB = (int)GetBValue(srcPixelData[srcPosV]) - blue;
+
+			//基準点(0)から隣のピクセル(1)まで1/ratioステップで変化させる
+			for (double r = 0; isless(r, 1.0); r += (1 / ratio))//実数の比較にC99で追加された浮動小数点数比較マクロを使用
 			{
-				lpcrPixelData2[newXY] = lpcrPixelData[oldXY];
-			}
-			//拡大
-			else
-			{
-				//Nearest neighbor
-				if (algorithm == 0)
+				//縦方向の補間
+				int dscPosV = (int)(x * ratio) + (int)((y + r) * ratio) * dscWidth;
+				dscPixelData[dscPosV] = RGB(
+					(BYTE)(red + diffRV * r), 
+					(BYTE)(green + diffVG * r), 
+					(BYTE)(blue + diffVB * r));
+
+				//横方向の補間
+				int dscPosH = (int)((x + r) * ratio) + (int)(y * ratio) * dscWidth;
+				dscPixelData[dscPosH] = RGB(
+					(BYTE)(red + diffRH * r),
+					(BYTE)(green + diffHG * r),
+					(BYTE)(blue + diffHB * r));
+
+				//補間した縦のピクセルを元に一つ前のブロックの横方向を補間
+				if (x != 0)
 				{
-					lpcrPixelData2[newXY] = lpcrPixelData[oldXY];
-				}
-				//Bilinear
-				else if (algorithm == 1)
-				{
-					//TODO
-				}
-				//Bicubic
-				else if (algorithm == 2)
-				{
-					//TODO
+					//一つ前のブロックの位置
+					int prevPosV = (int)((x - 1) * ratio) + (int)((y + r) * ratio) * dscWidth;
+
+					//符号が必要なのでintで計算して最後にBYTEにキャストする
+					int prevR = (int)GetRValue(dscPixelData[prevPosV]);
+					int prevG = (int)GetGValue(dscPixelData[prevPosV]);
+					int prevB = (int)GetBValue(dscPixelData[prevPosV]);
+
+					int diffR = (int)GetRValue(dscPixelData[dscPosV]) - prevR;
+					int diffG = (int)GetGValue(dscPixelData[dscPosV]) - prevG;
+					int diffB = (int)GetBValue(dscPixelData[dscPosV]) - prevB;
+
+					//基準点(0)から隣のピクセル(1)まで1/ratioステップで変化させる（横方向の補間）
+					for (double rh = (1 / ratio); isless(rh, 1.0); rh += (1 / ratio))
+					{
+						int dscPos = (int)((x - 1 + rh) * ratio) + (int)((y + r) * ratio) * dscWidth;
+						dscPixelData[dscPos] = RGB(
+							(BYTE)(prevR + diffR * rh),
+							(BYTE)(prevG + diffG * rh),
+							(BYTE)(prevB + diffB * rh));
+					}
 				}
 			}
 		}
 	}
+}
 
-	ShowPictureDlg(lpcrPixelData2, &bmpInf);
-
-	delete[] lpcrPixelData2;
+///<summary>
+///	Bicubic
+///</summary>
+void CResize::ResizeByBicubic(UINT width, UINT height, UINT dscWidth, UINT dscHeight, double ratio, LPCOLORREF srcPixelData, LPCOLORREF dscPixelData)
+{
+	//TODO
 }

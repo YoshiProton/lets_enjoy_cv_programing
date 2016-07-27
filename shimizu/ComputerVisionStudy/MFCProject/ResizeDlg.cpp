@@ -117,9 +117,9 @@ void CResizeDlg::OnOK()
 
 	*pAlgo = algorithm;
 
-	//CString        str;
-	//str.Format(_T("アルゴリズム%dが選択されています。倍率は%fです。"), *pAlgo + 1, *pRatio);
-	//MessageBox(str);
+	//CString msg;
+	//msg.Format(_T("アルゴリズム%dが選択されています。倍率は%fです。"), *pAlgo + 1, *pRatio);
+	//MessageBox(msg);
 
 	CDialogEx::OnOK();
 }

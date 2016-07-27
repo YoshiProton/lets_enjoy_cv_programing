@@ -45,7 +45,7 @@ void COriginal::ProcessFullOpenCV(CString filePath)
 ///<summary>
 ///	OpenCVを全く使わずにフルスクラッチ
 ///</summary>
-void COriginal::ProcessFullScratch(LPCOLORREF lpcrPixelData, BITMAPINFO* bmpInfo)
+void COriginal::ProcessFullScratch(LPCOLORREF pixelData, BITMAPINFO* bmpInfo)
 {
-	ShowPictureDlg(lpcrPixelData, bmpInfo);
+	ShowPictureDlg(pixelData, bmpInfo);
 }
