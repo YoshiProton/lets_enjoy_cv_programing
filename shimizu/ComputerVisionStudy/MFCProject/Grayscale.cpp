@@ -89,7 +89,7 @@ void CGrayscale::ProcessFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo
 	UINT HEIGHT = -1 * bmpInfo->bmiHeader.biHeight;
 
 	BYTE byRed, byGreen, byBlue, byDensity;
-	LPCOLORREF dscPixelData = new COLORREF[WIDTH * HEIGHT];
+	LPCOLORREF dstPixelData = new COLORREF[WIDTH * HEIGHT];
 
 	for (int i = 0;i < WIDTH * HEIGHT; i++)
 	{
@@ -98,10 +98,10 @@ void CGrayscale::ProcessFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo
 		byBlue = GetBValue(srcPixelData[i]);
 
 		byDensity = (4 * byRed + 2 * byGreen + byBlue) / 7;
-		dscPixelData[i] = RGB(byDensity, byDensity, byDensity);
+		dstPixelData[i] = RGB(byDensity, byDensity, byDensity);
 	}
 
-	ShowPictureDlg(dscPixelData, bmpInfo);
+	ShowPictureDlg(dstPixelData, bmpInfo);
 
-	delete[] dscPixelData;
+	delete[] dstPixelData;
 }

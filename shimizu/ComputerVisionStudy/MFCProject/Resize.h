@@ -14,6 +14,7 @@ public:
 	void ProcessFullScratch(LPCOLORREF, BITMAPINFO*);
 
 private:
+	double GetBicubicWeight(double);
 	void ResizeByNearestNeighbor(UINT, UINT, UINT, UINT, double, LPCOLORREF, LPCOLORREF);
 	void ResizeByBilinear(UINT, UINT, UINT, UINT, double, LPCOLORREF, LPCOLORREF);
 	void ResizeByBicubic(UINT, UINT, UINT, UINT, double, LPCOLORREF, LPCOLORREF);
