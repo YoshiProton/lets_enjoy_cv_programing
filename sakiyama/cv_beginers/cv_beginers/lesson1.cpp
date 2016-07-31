@@ -156,7 +156,6 @@ namespace lesson1 {
         SET_COLOR(dst, i, j, color);
       }
     }
-
     
     if(!cv::imwrite(saveFileName, dst)){
       std::cout << "save error!! : " << saveFileName << std::endl;

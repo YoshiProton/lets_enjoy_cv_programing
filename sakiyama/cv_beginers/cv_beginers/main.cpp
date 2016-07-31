@@ -34,11 +34,7 @@ bool validate(int argc, const char * argv[]){
 
 int main(int argc, const char * argv[]) {
 
-#if DEBUG
-  std::string exec = "cv_beginers";
-  std::string lessonNumber = "1";
-  std::string sectionNumber = "2";
-  
+#if DEBUG  
   std::string dir = "/Users/sakiyamaK/Documents/event/lets_enjoy_cv_programing/_lesson/20160709";
   
   std::string fileName = "lena.jpg";
@@ -47,7 +43,7 @@ int main(int argc, const char * argv[]) {
   std::string saveFileName = "lena_gray.jpg";
   std::string saveFullPath = dir + "/" + saveFileName;
   
-  lesson1::section5(fullPath, saveFullPath);
+  lesson2::section4(fullPath, saveFullPath);
 #else
   
   if(!validate(argc, argv)){
