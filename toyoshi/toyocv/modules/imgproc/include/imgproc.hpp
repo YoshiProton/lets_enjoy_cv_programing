@@ -3,6 +3,8 @@
 #ifndef __IMGPROC__
 #define __IMGPROC__
 
-int myCvtColor(const cv::Mat &image, cv::Mat &grayImage);
-
+namespace toyocv{
+  void cvtColor(cv::InputArray src, cv::OutputArray dst);
+  void resize(cv::InputArray src, cv::OutputArray dst);
+}
 #endif

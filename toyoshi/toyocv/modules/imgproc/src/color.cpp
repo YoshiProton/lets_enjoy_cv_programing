@@ -1,23 +1,36 @@
 #include "../include/imgproc.hpp"
 using namespace cv;
 
-int myCvtColor(const Mat &image, Mat &grayImage)
-{
-  int imageWidth = image.rows;
-  int imageHeight = image.cols;
-  int imageType = image.type();
+namespace toyocv{
+  void cvtColor(InputArray _src, OutputArray _dst)
+  {
+    int stype = _src.type();
+    int dcn = 1;
+    int depth = CV_MAT_DEPTH(stype);
+    
+    Mat src, dst;
+    src = _src.getMat();
+
+    Size sz = src.size();
+
+    _dst.create(sz, CV_MAKETYPE(depth, dcn));
+    dst = _dst.getMat();
+    
+    int imageWidth = src.rows;
+    int imageHeight = src.cols;
   
-  grayImage = Mat::zeros(imageWidth, imageHeight, CV_8UC1);
+    dst = Mat::zeros(imageWidth, imageHeight, CV_8UC1);
 
-  for(int w = 0; w < imageWidth; w++){
-    for(int h = 0; h < imageHeight; h++){
-      uchar r = image.at<Vec3b>(w, h).val[0];
-      uchar b = image.at<Vec3b>(w, h).val[1];
-      uchar g = image.at<Vec3b>(w, h).val[2];
+    for(int w = 0; w < imageWidth; w++){
+      for(int h = 0; h < imageHeight; h++){
+	uchar r = src.at<Vec3b>(w, h).val[0];
+	uchar b = src.at<Vec3b>(w, h).val[1];
+	uchar g = src.at<Vec3b>(w, h).val[2];
 
-      double sum = r + b + g;
+	double sum = r + b + g;
 
-      grayImage.at<uchar>(w, h) = (uchar)(sum / 3.0);
+	dst.at<uchar>(w, h) = (uchar)(sum / 3.0);
+      }
     }
   }
 }
