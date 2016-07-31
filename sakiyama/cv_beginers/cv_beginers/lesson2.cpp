@@ -110,5 +110,39 @@ namespace lesson2{
     
   }
 
-  void exec(int argc, const char * argv[]);
+  void exec(int argc, const char * argv[]){
+    int sectionNumber = atoi(argv[2]);
+    
+    switch (sectionNumber) {
+      case 1:
+      {
+        std::string inputFileFullPath = std::string(argv[3]);
+        section1(inputFileFullPath);
+        break;
+      }
+      case 2:
+      {
+        std::string inputFileFullPath = std::string(argv[3]);
+        section2(inputFileFullPath);
+        break;
+      }
+      case 3:
+      {
+        std::string inputFileFullPath = std::string(argv[3]);
+        section3(inputFileFullPath);
+        break;
+      }
+      case 4:
+      {
+        std::string inputFileFullPath = std::string(argv[3]);
+        std::string saveFileFullPath = std::string(argv[4]);
+        section4(inputFileFullPath, saveFileFullPath);
+        break;
+      }
+      default:
+        //エラーハンドリング
+        break;
+    }
+
+  }
 }
