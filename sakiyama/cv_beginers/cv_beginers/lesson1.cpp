@@ -69,26 +69,30 @@ namespace lesson1 {
     cv::Mat mat;
     if(!Util::loadMat(fileName, mat)) return;
 
-    std::cout << mat.channels() << std::endl;
+    //古い書き方 1
+//    for(int i = 0 ; i < mat.rows ; i++){
+//      for(int j = 0; j < mat.cols ; j++){
+//        int color = 0;
+//        u_long p = GET_P(mat, i, j);
+//        for(int c = 0 ; c < mat.channels(); c++){
+//          color += mat.data[p + c];
+//        }
+//        color /= mat.channels();
+//        
+//        for(int c = 0 ; c < saveMat.channels(); c++){
+//          mat.data[p + c] = color;
+//        }
+//      }
+//    }
+
+    mat.forEach<cv::Vec3b>([](cv::Vec3b &p, const int * position) -> void {
+      auto gray = cv::mean(p);
+      p[0] = gray[0];
+      p[1] = gray[0];
+      p[2] = gray[0];
+    });
     
-    cv::Mat saveMat(mat.cols, mat.rows, CV_8UC(mat.channels()));
-    
-    for(int i = 0 ; i < mat.rows ; i++){
-      for(int j = 0; j < mat.cols ; j++){
-        int color = 0;
-        u_long p = GET_P(mat, i, j);
-        for(int c = 0 ; c < mat.channels(); c++){
-          color += mat.data[p + c];
-        }
-        color /= mat.channels();
-        
-        for(int c = 0 ; c < saveMat.channels(); c++){
-          saveMat.data[p + c] = color;
-        }
-      }
-    }
-    
-    if(!cv::imwrite(saveFileName, saveMat)){
+    if(!cv::imwrite(saveFileName, mat)){
       std::cout << "save error!! : " << saveFileName << std::endl;
     }
   }
@@ -133,17 +137,26 @@ namespace lesson1 {
     
     cv::Mat dst(mat.rows * 2, mat.cols * 2, CV_8UC3);
     
+    //古い書き方
+//    for(int i = 0 ; i < dst.rows ; i++){
+//      for(int j = 0; j < dst.cols ; j++){
+//        
+//        unsigned long p1 = GET_P(mat, i / 2, j / 2);
+//        unsigned long p2 = GET_P(dst, i, j);
+//        
+//        for(int c = 0 ; c < mat.channels() ; c++){
+//          dst.data[p2 + c] = mat.data[p1 + c];
+//        }
+//      }
+//    }
+
     for(int i = 0 ; i < dst.rows ; i++){
       for(int j = 0; j < dst.cols ; j++){
-
-        unsigned long p1 = GET_P(mat, i / 2, j / 2);
-        unsigned long p2 = GET_P(dst, i, j);
-        
-        for(int c = 0 ; c < mat.channels() ; c++){
-          dst.data[p2 + c] = mat.data[p1 + c];
-        }
+        auto color = GET_COLOR(mat, i/2, j/2);
+        SET_COLOR(dst, i, j, color);
       }
     }
+
     
     if(!cv::imwrite(saveFileName, dst)){
       std::cout << "save error!! : " << saveFileName << std::endl;

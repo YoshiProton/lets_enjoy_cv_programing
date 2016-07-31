@@ -9,6 +9,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "lesson1.hpp"
+#include "lesson2.hpp"
 
 void info(){
   std::cout << "OpenCV version : " << CV_VERSION << std::endl;
@@ -58,6 +59,9 @@ int main(int argc, const char * argv[]) {
   switch (lessonNumber) {
     case 1:
       lesson1::exec(argc, argv);
+      break;
+    case 2:
+      lesson2::exec(argc, argv);
       break;
     default:
       break;
