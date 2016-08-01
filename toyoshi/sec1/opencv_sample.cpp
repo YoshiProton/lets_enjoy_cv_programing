@@ -33,7 +33,7 @@ int main( int argc, char** argv )
   Mat resizeImage;
   resize(image, resizeImage, Size(), 2.0, 2.0, INTER_NEAREST);
   Mat myResizeImage;
-  toyocv::resize(image, myResizeImage);
+  toyocv::resize(image, myResizeImage, toyocv::Bilinear);
 
   imshow("Orig Image", image);
   imshow("Gray Image", grayImage);
