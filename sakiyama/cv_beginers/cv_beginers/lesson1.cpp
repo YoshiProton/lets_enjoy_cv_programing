@@ -6,10 +6,9 @@
 //  Copyright © 2016年 崎山 圭. All rights reserved.
 //
 
+#include "basic.h"
 #include "lesson1.hpp"
-#include "Util.hpp"
-#include <iostream>
-#include <opencv2/opencv.hpp>
+
 
 namespace lesson1 {
     
@@ -152,8 +151,8 @@ namespace lesson1 {
 
     for(int i = 0 ; i < dst.rows ; i++){
       for(int j = 0; j < dst.cols ; j++){
-        auto color = GET_COLOR(mat, i/2, j/2);
-        SET_COLOR(dst, i, j, color);
+        auto color = *mat.ptr(i/2, j/2);
+        *dst.ptr(i, j) = color;
       }
     }
     

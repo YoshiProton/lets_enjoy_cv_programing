@@ -14,10 +14,6 @@
 
 #define GET_P(mat, y, x) (y) * (mat).step + (x) * (mat).elemSize()
 
-#define GET_COLOR(mat, i, j) (mat).ptr<cv::Vec3b>(i)[j]
-
-#define SET_COLOR(mat, i, j, color) (mat).ptr<cv::Vec3b>(i)[j]=(color)
-
 namespace Util {
   bool loadMat(const std::string &fileName, cv::Mat &mat, int flags=1);
 }

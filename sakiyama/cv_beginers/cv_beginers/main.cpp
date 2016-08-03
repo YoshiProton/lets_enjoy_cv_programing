@@ -6,10 +6,7 @@
 //  Copyright © 2016年 崎山 圭. All rights reserved.
 //
 
-#include <iostream>
-#include <opencv2/opencv.hpp>
-#include "lesson1.hpp"
-#include "lesson2.hpp"
+#include "basic.h"
 
 void info(){
   std::cout << "OpenCV version : " << CV_VERSION << std::endl;
@@ -34,16 +31,32 @@ bool validate(int argc, const char * argv[]){
 
 int main(int argc, const char * argv[]) {
 
-#if DEBUG  
-  std::string dir = "/Users/sakiyamaK/Documents/event/lets_enjoy_cv_programing/_lesson/20160709";
+#if DEBUG
+  std::string dir = "/Users/sakiyamaK/Documents/event/lets_enjoy_cv_programing/sakiyama/img";
   
-  std::string fileName = "lena.jpg";
-  std::string fullPath = dir + "/" + fileName;
+  std::string fullPath1;
+  std::string fullPath2;
+  std::string saveFullPath;
   
-  std::string saveFileName = "lena_gray.jpg";
-  std::string saveFullPath = dir + "/" + saveFileName;
+  fullPath1 = dir + "/" + "test_a.jpg";
+  fullPath2 = dir + "/" + "test_b.jpg";
   
-  lesson2::section4(fullPath, saveFullPath);
+  saveFullPath = dir + "/" + "blend1.jpg";
+  SameImageFile::alphaBlend1(fullPath1, fullPath2, 0.5, saveFullPath);
+  
+  saveFullPath = dir + "/" + "blend2.jpg";
+  SameImageFile::alphaBlend2(fullPath1, fullPath2, 0.5, saveFullPath);
+  
+  
+  saveFullPath = dir + "/" + "blend2.jpg";
+  SameImageFile::alphaBlend3(fullPath1, fullPath2, saveFullPath);
+
+  saveFullPath = dir + "/" + "emboss.jpg";
+  SameImageFile::emboss(fullPath2, 10, 10, saveFullPath);
+
+  saveFullPath = dir + "/" + "chromakey.jpg";
+  SameImageFile::chromakey(fullPath1, fullPath2, saveFullPath);
+
 #else
   
   if(!validate(argc, argv)){

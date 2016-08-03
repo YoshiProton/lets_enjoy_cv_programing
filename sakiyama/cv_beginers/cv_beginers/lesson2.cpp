@@ -6,10 +6,8 @@
 //  Copyright © 2016年 崎山 圭. All rights reserved.
 //
 
+#include "basic.h"
 #include "lesson2.hpp"
-#include "Util.hpp"
-#include <iostream>
-#include <opencv2/opencv.hpp>
 
 namespace lesson2{
   void section1(const std::string &fileName){
@@ -26,7 +24,7 @@ namespace lesson2{
     cv::Mat mat;
     if(!Util::loadMat(fileName, mat)) return;
     
-    auto color = GET_COLOR(mat, mat.rows / 2, mat.cols / 2);
+    auto color = *mat.ptr(mat.rows / 2, mat.cols / 2);
     std::cout << "filename = " << fileName << " center [r, g, b] = " << color << std::endl;
   }
   
@@ -46,7 +44,7 @@ namespace lesson2{
     
     cv::cvtColor(mat, mat, CV_BGR2HSV);
 
-    auto color = GET_COLOR(mat, mat.rows / 2, mat.cols / 2);
+    auto color = *mat.ptr(mat.rows / 2, mat.cols / 2);
     std::cout << "filename = " << fileName << " center [h, s, v] = " << color << std::endl;
     
   }
