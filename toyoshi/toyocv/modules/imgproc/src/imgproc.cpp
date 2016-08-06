@@ -25,6 +25,9 @@ namespace toyocv{
     case NearestNeighbors:
       resizer = new NearestNeighborsResizer();
       break;
+    case NearestNeighborsPointer:
+      resizer = new NearestNeighborsResizer();
+      break;
     case Bilinear:
       resizer = new BilinearResizer();
       break;

@@ -6,6 +6,7 @@
 namespace toyocv{
   enum ResizeMethod{
     NearestNeighbors,
+    NearestNeighborsPointer,
     Bilinear
   };
   

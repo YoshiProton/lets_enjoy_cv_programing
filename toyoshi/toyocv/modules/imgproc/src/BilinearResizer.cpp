@@ -8,8 +8,8 @@ namespace toyocv{
     int imageWidth = src.rows * scale;
     int imageHeight = src.cols * scale;
 
-    for(int w = 1; w < imageWidth - 1; w++){
-      for(int h = 1; h < imageHeight - 1; h++){
+    for(int w = 0; w < imageWidth; w++){
+      for(int h = 0; h < imageHeight; h++){
 	int nearx1 = w / scale;
 	int neary2 = h / scale;
 
@@ -30,9 +30,9 @@ namespace toyocv{
 	  + (nearx2 * 2 - w) / ((nearx2 - nearx1) * 2.0) * q21;
 	Vec3b fxy2 = (nearx2 * 2 - w) / ((nearx2 - nearx1) * 2.0) * q12
 	  + (nearx2 * 2 - w) / ((nearx2 - nearx1) * 2.0) * q22;
-	Vec3b fxy = (neary2 * 2 - h) / ((neary2 - neary1) * 2.0) * q12
-	  + (neary2 * 2 - h) / ((neary2 - neary1) * 2.0) * q22;
-
+	Vec3b fxy = (neary2 * 2 - h) / ((neary2 - neary1) * 2.0) * fxy1
+	  + (neary2 * 2 - h) / ((neary2 - neary1) * 2.0) * fxy2;
+	
 	dst.at<Vec3b>(w, h) = fxy;
       }
     }

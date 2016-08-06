@@ -5,4 +5,7 @@ namespace toyocv{
   class NearestNeighborsResizer : public Resizer{
     void resize(Mat src, Mat dst);
   };
+  class NearestNeighborsResizerPointer : public Resizer{
+    void resize(Mat src, Mat dst);
+  };
 }
