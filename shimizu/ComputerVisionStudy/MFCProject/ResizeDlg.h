@@ -15,7 +15,7 @@ public:
 
 // ダイアログ データ
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_RESIEBOX };
+	enum { IDD = IDD_RESIZEBOX };
 #endif
 
 protected:

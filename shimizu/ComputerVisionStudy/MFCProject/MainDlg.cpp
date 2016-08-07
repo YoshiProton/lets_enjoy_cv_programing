@@ -14,6 +14,9 @@
 #include "Original.h"
 #include "Grayscale.h"
 #include "Resize.h"
+#include "ColorSpaceDlg.h"
+#include "HSVFilter.h"
+#include "Utility.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -86,6 +89,10 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_COMMAND(ID_MENU_RESIZE_FULLOCV, &CMainDlg::OnMenuResizeFullOpenCV)
 	ON_COMMAND(ID_MENU_RESIZE_HALFOCV, &CMainDlg::OnMenuResizeHalfOpenCV)
 	ON_COMMAND(ID_MENU_RESIZE_SCRATCH, &CMainDlg::OnMenuResizeScratch)
+	ON_COMMAND(ID_MENU_NEW, &CMainDlg::OnMenuNew)
+	ON_COMMAND(ID_MENU_FILTER_COLOR, &CMainDlg::OnMenuFilterColor)
+	ON_WM_SIZE()
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 
@@ -121,6 +128,19 @@ BOOL CMainDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 小さいアイコンの設定
 
 	// TODO: 初期化をここに追加します。
+	int err = 0;
+	UINT statusText[2] = { 0, IDS_ABOUTBOX };
+
+	// ステータスバー初期化
+	if (!err) if (!statusBar.Create(this)) err = 1;
+	if (!err) if (!statusBar.SetIndicators(statusText, 2)) err = 1;
+	if (!err)
+	{
+		statusBar.SetPaneInfo(0, 0, SBPS_STRETCH, 0);
+		statusBar.SetPaneInfo(1, IDS_ABOUTBOX, SBPS_NORMAL, 30);
+		if (!statusBar.SetPaneText(0, _T("ステータスバー"))) err = 1;
+	}
+	if (!err) RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 
 	return TRUE;  // フォーカスをコントロールに設定した場合を除き、TRUE を返します。
 }
@@ -179,6 +199,44 @@ void CMainDlg::OnPaint()
 HCURSOR CMainDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+void CMainDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
+}
+
+///<summary>
+/// 課題2の1,2
+/// 左クリックした画素の位置、RGB,HSVの値をステータスバーに表示
+///</summary>
+void CMainDlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	if (pixelData != NULL)
+	{
+		UINT width = bmpInfo.bmiHeader.biWidth;
+		UINT height = -1 * bmpInfo.bmiHeader.biHeight;
+
+		if (width >= point.x &&  height >= point.y)
+		{
+			COLORREF pixel = pixelData[point.x + point.y * WIDTH];
+
+			BYTE r = GetRValue(pixel);
+			BYTE g = GetGValue(pixel);
+			BYTE b = GetBValue(pixel);
+
+			int h ,s,v;
+			CUtility::ConvertRGBtoHSV(r, g, b, &h, &s, &v);
+
+			CString msg;
+			msg.Format(_T("座標 [x:%d y:%d] RGB[%d,%d,%d] HSV[%d,%d,%d]"), point.x, point.y, r, g, b, h, s, v);
+			statusBar.SetPaneText(0, msg);
+		}
+	}
+
+	CDialogEx::OnLButtonDown(nFlags, point);
 }
 
 
@@ -251,6 +309,7 @@ void CMainDlg::OnMenuOpen()
 
 		Invalidate(TRUE);
 
+		statusBar.SetPaneText(0, _T("ファイルを開きました"));
 		UpdateData(FALSE);
 	}
 }
@@ -264,7 +323,7 @@ void CMainDlg::OnMenuSave()
 	CFileDialog fileDlg(FALSE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, filter);
 	if (fileDlg.DoModal() == IDOK)
 	{
-
+		statusBar.SetPaneText(0, _T("ファイルを保存しました"));
 		UpdateData(FALSE);
 	}
 }
@@ -437,3 +496,47 @@ void CMainDlg::OnMenuResizeScratch()
 #pragma endregion
 
 #pragma endregion
+
+
+///<summary>
+///課題2の3
+///</summary>
+void CMainDlg::OnMenuNew()
+{
+	//OpenCVで全部やる方式（RBG<-->HSV変換）
+	cv::Mat srcImg(256, 256, CV_8UC3);
+	cv::Mat dstImg(256, 256, CV_8UC3);
+	for (int y = 0; y<srcImg.rows; y++) 
+	{
+		for (int x = 0; x<srcImg.cols; x++) 
+		{
+			srcImg.at<cv::Vec3b>(y, x)[0] = 100; 
+			srcImg.at<cv::Vec3b>(y, x)[1] = 100;
+			srcImg.at<cv::Vec3b>(y, x)[2] = 100;
+		}
+	}
+	cv::cvtColor(srcImg, dstImg, cv::COLOR_HSV2BGR);
+	cv::namedWindow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", cv::WINDOW_AUTOSIZE);
+	cv::imshow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", dstImg);
+
+	//ダイアログでRGB(HSV)を指定した値を元にして表示する方式（作成中）
+	int r, g, b;
+	int width, height;
+	CColorSpaceDlg dlg;
+	dlg.SetValues(&width, &height, &r, &g, &b);
+	if (dlg.DoModal() == IDOK)
+	{
+		//フルスクラッチでRBG<-->HSV変換
+		cv::Mat img(cv::Size(width, height), CV_8UC3, cv::Scalar(b, g, r));
+		cv::namedWindow("スクラッチでRBG<-->HSV変換", cv::WINDOW_AUTOSIZE);
+		cv::imshow("スクラッチでRBG<-->HSV変換", img);
+	}
+}
+
+
+void CMainDlg::OnMenuFilterColor()
+{
+	CHSVFilter filter;
+	filter.ProcessFullOpenCV(filePath);
+}
+

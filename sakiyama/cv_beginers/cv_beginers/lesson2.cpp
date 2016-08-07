@@ -25,7 +25,7 @@ namespace lesson2{
     if(!Util::loadMat(fileName, mat)) return;
     
     auto color = *mat.ptr(mat.rows / 2, mat.cols / 2);
-    std::cout << "filename = " << fileName << " center [r, g, b] = " << color << std::endl;
+    std::cout << "filename = " << fileName << " center [b, g, r] = " << color << std::endl;
   }
   
   void section2(const std::string &fileName){

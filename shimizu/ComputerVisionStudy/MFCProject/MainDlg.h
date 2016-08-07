@@ -5,6 +5,7 @@
 #pragma once
 #include <string> 
 #include "afxwin.h"
+#include "afxext.h"
 
 // CMainDlg ダイアログ
 class CMainDlg : public CDialogEx
@@ -32,10 +33,14 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CImage image;
+	CStatusBar statusBar;
 	CString filePath;
 	LPCOLORREF pixelData;
 	BITMAPINFO bmpInfo;
@@ -60,4 +65,6 @@ public:
 	afx_msg void OnMenuResizeFullOpenCV();
 	afx_msg void OnMenuResizeHalfOpenCV();
 	afx_msg void OnMenuResizeScratch();
+	afx_msg void OnMenuNew();
+	afx_msg void OnMenuFilterColor();
 };

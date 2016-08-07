@@ -102,3 +102,4 @@ void CImageProcessor::ShowPictureDlg(cv::Mat m_matCVImg)
 		image = NULL;
 	}
 }
+
