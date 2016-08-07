@@ -6,9 +6,14 @@
 //  Copyright © 2016年 崎山 圭. All rights reserved.
 //
 
-#include <iostream>
-#include <opencv2/opencv.hpp>
-#include "lesson1.hpp"
+#include "basic.h"
+
+void info(){
+  std::cout << "OpenCV version : " << CV_VERSION << std::endl;
+  std::cout << "Major version : " << CV_MAJOR_VERSION << std::endl;
+  std::cout << "Minor version : " << CV_MINOR_VERSION << std::endl;
+  std::cout << "Subminor version : " << CV_SUBMINOR_VERSION << std::endl;
+}
 
 
 bool validate(int argc, const char * argv[]){
@@ -27,27 +32,31 @@ bool validate(int argc, const char * argv[]){
 int main(int argc, const char * argv[]) {
 
 #if DEBUG
-  std::cout << "OpenCV version : " << CV_VERSION << std::endl;
-  std::cout << "Major version : " << CV_MAJOR_VERSION << std::endl;
-  std::cout << "Minor version : " << CV_MINOR_VERSION << std::endl;
-  std::cout << "Subminor version : " << CV_SUBMINOR_VERSION << std::endl;
+  std::string dir = "/Users/sakiyamaK/Documents/event/lets_enjoy_cv_programing/sakiyama/img";
   
-  std::string exec = "cv_beginers";
-  std::string lessonNumber = "1";
-  std::string sectionNumber = "2";
+  std::string fullPath1;
+  std::string fullPath2;
+  std::string saveFullPath;
   
-  std::string dir = "/Users/sakiyamaK/Documents/study/lets_enjoy_cv_programing/_lesson/20160709";
+  fullPath1 = dir + "/" + "test_a.jpg";
+  fullPath2 = dir + "/" + "test_b.jpg";
   
-  std::string fileName = "lena.jpg";
-  std::string fullPath = dir + "/" + fileName;
+  saveFullPath = dir + "/" + "blend1.jpg";
+  SameImageFile::alphaBlend1(fullPath1, fullPath2, 0.5, saveFullPath);
   
-  std::string saveFileName = "lena_gray.jpg";
-  std::string saveFullPath = dir + "/" + saveFileName;
+  saveFullPath = dir + "/" + "blend2.jpg";
+  SameImageFile::alphaBlend2(fullPath1, fullPath2, 0.5, saveFullPath);
   
-  const char *input[] = {exec.c_str(), lessonNumber.c_str(),
-    sectionNumber.c_str(), fullPath.c_str(), saveFullPath.c_str()};
   
-  lesson1::exec(5, input);
+  saveFullPath = dir + "/" + "blend2.jpg";
+  SameImageFile::alphaBlend3(fullPath1, fullPath2, saveFullPath);
+
+  saveFullPath = dir + "/" + "emboss.jpg";
+  SameImageFile::emboss(fullPath2, 10, 10, saveFullPath);
+
+  saveFullPath = dir + "/" + "chromakey.jpg";
+  SameImageFile::chromakey(fullPath1, fullPath2, saveFullPath);
+
 #else
   
   if(!validate(argc, argv)){
@@ -59,6 +68,9 @@ int main(int argc, const char * argv[]) {
   switch (lessonNumber) {
     case 1:
       lesson1::exec(argc, argv);
+      break;
+    case 2:
+      lesson2::exec(argc, argv);
       break;
     default:
       break;
