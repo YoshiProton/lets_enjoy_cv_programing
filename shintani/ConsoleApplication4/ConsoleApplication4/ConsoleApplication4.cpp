@@ -49,6 +49,6 @@ int main()
 	imshow("gray_lena", img_gry);
 	cvWaitKey(0);
 
-	return 0;
+    return 0;
 }
 
