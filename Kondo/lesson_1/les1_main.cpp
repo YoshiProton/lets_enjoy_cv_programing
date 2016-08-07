@@ -99,14 +99,14 @@ void resize2x_custom(cv::Mat img, int method)
 	int width = img.cols;
 	cv::Mat dstimg(width * 2, height * 2, CV_8UC3, cv::Scalar::all(0));
 
-	// 元画像の値を先に配置
-	for (int i = 0; i < width; i++)
-	{
-		for (int j = 0; j < height; j = j++)
-		{
-			dstimg.at<cv::Vec3b>(j * 2, i * 2) = img.at<cv::Vec3b>(j, i);
-		}
-	}
+	////// 元画像の値を先に配置
+	////for (int i = 0; i < width; i++)
+	////{
+	////	for (int j = 0; j < height; j = j++)
+	////	{
+	////		dstimg.at<cv::Vec3b>(j * 2, i * 2) = img.at<cv::Vec3b>(j, i);
+	////	}
+	////}
 
 	// 補間の種類の選択
 	if (method == 1)
@@ -119,7 +119,7 @@ void resize2x_custom(cv::Mat img, int method)
 			{
 				// ①単純に2x2の４つにオリジナル画像の画素値を配置
 				color = img.at<cv::Vec3b>(j, i);
-				//dstimg.at<cv::Vec3b>(2 * j    , 2 * i    ) = color;  // すでに配置済みのためいらない
+				dstimg.at<cv::Vec3b>(2 * j    , 2 * i    ) = color;  // すでに配置済みのためいらない
 				dstimg.at<cv::Vec3b>(2 * j + 1, 2 * i    ) = color;
 				dstimg.at<cv::Vec3b>(2 * j    , 2 * i + 1) = color;
 				dstimg.at<cv::Vec3b>(2 * j + 1, 2 * i + 1) = color;
@@ -134,31 +134,34 @@ void resize2x_custom(cv::Mat img, int method)
 			for (int j = 0; j < height; j++)
 			{
 				// ②リニア補間
+				// 2x2の左上
+				dstimg.at<cv::Vec3b>(2 * j, 2 * i) = img.at<cv::Vec3b>(j, i);
+				
 				// 2x2の左下
 				if (j + 1 >= height) // 画像の下端の判定
-					color = dstimg.at<cv::Vec3b>(2 * j, 2 * i);
+					color = img.at<cv::Vec3b>(j, i);
 				else
 					// ※【注意】足した後に1/2にすると、画素値がオーバーフローするので、各々割ったのち足す。
-					color = 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i) + 0.5 * dstimg.at<cv::Vec3b>(2 * j + 2, 2 * i);
+					color = 0.5 * img.at<cv::Vec3b>(j, i) + 0.5 * img.at<cv::Vec3b>(j + 1, i);
 				dstimg.at<cv::Vec3b>(2 * j + 1, 2 * i) = color;
 
 				// 2x2の右上
 				if (i + 1 >= width) // 画像の右端の判定
-					color = dstimg.at<cv::Vec3b>(2 * j, 2 * i);
+					color = img.at<cv::Vec3b>(j, i);
 				else
-					color = 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i) + 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i + 2);
+					color = 0.5 * img.at<cv::Vec3b>(j, i) + 0.5 * img.at<cv::Vec3b>(j, i + 1);
 				dstimg.at<cv::Vec3b>(2 * j, 2 * i + 1) = color;
 				
 				// 2x2の右下
 				if (j + 1 >= height && i + 1 >= width) // 画像の右下角の場合、オリジナル画素値をセット
-					color = dstimg.at<cv::Vec3b>(2 * j, 2 * i);
+					color = img.at<cv::Vec3b>(j, i);
 				else if (i + 1 >= width) // 画像の右端の場合、左上と左下の平均をセット
-					color = 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i) + 0.5 * dstimg.at<cv::Vec3b>(2 * j + 2, 2 * i);
+					color = 0.5 * img.at<cv::Vec3b>(j, i) + 0.5 * img.at<cv::Vec3b>(j + 1, i);
 				else if (j + 1 >= height) // 画像の下端の場合、左上と右上の平均をセット
-					color = 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i) + 0.5 * dstimg.at<cv::Vec3b>(2 * j, 2 * i + 2);
+					color = 0.5 * img.at<cv::Vec3b>(j, i) + 0.5 * img.at<cv::Vec3b>(j, i + 1);
 				else // 画像の中ほどにある場合は、周囲４つの平均をセット
-					color = 0.25 * dstimg.at<cv::Vec3b>(2 * j, 2 * i) + 0.25 * dstimg.at<cv::Vec3b>(2 * j, 2 * i + 2)
-							+ 0.25 * dstimg.at<cv::Vec3b>(2 * j + 2, 2 * i) + 0.25 * dstimg.at<cv::Vec3b>(2 * j + 2, 2 * i + 2);
+					color = 0.25 * img.at<cv::Vec3b>(j, i) + 0.25 * dstimg.at<cv::Vec3b>(j, i + 1)
+							+ 0.25 * img.at<cv::Vec3b>(j + 1, i) + 0.25 * dstimg.at<cv::Vec3b>(j + 1, i + 1);
 				dstimg.at<cv::Vec3b>(2 * j + 1, 2 * i + 1) = color;
 			}
 		}
