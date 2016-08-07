@@ -20,11 +20,11 @@ int main()
 
 	cv::imshow("", input); // ‰Û‘è1-1
 	cv::waitKey(1000);
-	cv::imwrite("lena.jpg", input);
-	cv::imwrite("lena_gray_cv.jpg", gray_cv); // ‰Û‘è1-2 
-	cv::imwrite("lena_gray_own.jpg", gray_own); // ‰Û‘è1-3 
-	cv::imwrite("lena_scale_cv.jpg", scale_cv); // ‰Û‘è1-4 
-	cv::imwrite("lena_scale_own.jpg", scale_own); // ‰Û‘è1-5 
+	cv::imwrite("image/task1/lena.jpg", input);
+	cv::imwrite("image/task1/lena_gray_cv.jpg", gray_cv); // ‰Û‘è1-2 
+	cv::imwrite("image/task1/lena_gray_own.jpg", gray_own); // ‰Û‘è1-3 
+	cv::imwrite("image/task1/lena_scale_cv.jpg", scale_cv); // ‰Û‘è1-4 
+	cv::imwrite("image/task1/lena_scale_own.jpg", scale_own); // ‰Û‘è1-5 
 
 	cv::Vec3b centerPixel = input.at<cv::Vec3b>(rows / 2, cols / 2); // ‰Û‘è2-1—p
 
@@ -40,8 +40,8 @@ int main()
 
 	printf("RGB(%d, %d, %d)\n", centerPixel[2], centerPixel[1], centerPixel[0]); // ‰Û‘è2-1
 	printf("HSV(%d, %d, %d)\n", centerPixelHSV[2], centerPixelHSV[1], centerPixelHSV[0]); // ‰Û‘è2-2
-	cv::imwrite("hsv100.jpg", image_hsv); // ‰Û‘è2-3
-	cv::imwrite("lena_skinDetect_own.jpg", skin_own); // ‰Û‘è2-4 
+	cv::imwrite("image/task2/hsv100.jpg", image_hsv); // ‰Û‘è2-3
+	cv::imwrite("image/task2/lena_skinDetect_own.jpg", skin_own); // ‰Û‘è2-4 
 
     return 0;
 }
