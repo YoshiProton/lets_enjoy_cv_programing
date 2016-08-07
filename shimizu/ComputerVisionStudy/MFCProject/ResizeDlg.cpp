@@ -12,7 +12,7 @@
 IMPLEMENT_DYNAMIC(CResizeDlg, CDialogEx)
 
 CResizeDlg::CResizeDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_RESIEBOX, pParent)
+	: CDialogEx(IDD_RESIZEBOX, pParent)
 	, sliderValue(0)
 	, algorithm(0)
 {
@@ -94,7 +94,7 @@ void CResizeDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CResizeDlg::OnOK()
 {
-	UpdateData();
+	UpdateData(TRUE);
 
 	switch (sliderValue)
 	{
@@ -116,10 +116,6 @@ void CResizeDlg::OnOK()
 	}
 
 	*pAlgo = algorithm;
-
-	//CString msg;
-	//msg.Format(_T("アルゴリズム%dが選択されています。倍率は%fです。"), *pAlgo + 1, *pRatio);
-	//MessageBox(msg);
 
 	CDialogEx::OnOK();
 }
