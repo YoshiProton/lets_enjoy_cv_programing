@@ -43,5 +43,11 @@ int main()
 	cv::imwrite("image/task2/hsv100.jpg", image_hsv); // ‰Û‘è2-3
 	cv::imwrite("image/task2/lena_skinDetect_own.jpg", skin_own); // ‰Û‘è2-4 
 
+	cv::Mat image_average(rows, cols, CV_8UC3); // ‰Û‘è3-1—p
+	my_average(input, image_average);
+
+	cv::imwrite("image/task3/lena_average.jpg", image_average); // ‰Û‘è3-1
+
+
     return 0;
 }

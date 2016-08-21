@@ -3,6 +3,37 @@
 
 using namespace cv;
 
+// clamp処理
+inline float my_clamp(float x, float min, float max) {
+	if (x < min) x = min;
+	if (x > max) x = max;
+
+	return x;
+}
+
+// clamp処理(cv::Vec3f)
+inline cv::Vec3f my_clamp(cv::Vec3f x, float min, float max) {
+	for (int i = 0; i < 3; i++)
+	{
+		if (x(i) < min) x(i) = min;
+		if (x(i) > max) x(i) = max;
+	}
+
+	return x;
+}
+
+// mirror処理
+inline int my_mirror(int x, int min, int max) {
+	while (x < min || x >= max) {
+		if (x < min) x = min + (min - x - 1);
+		if (x >= max) x = max + (max - x - 1);
+	}
+
+	return x;
+}
+
+
+// グレースケール化
 inline void my_grayscale(const cv::Mat image, cv::Mat out)
 {
 	for (int y = 0; y < image.rows; y++)
@@ -24,7 +55,7 @@ inline void my_grayscale(const cv::Mat image, cv::Mat out)
 	return;
 }
 
-
+// サイズ変更(Nearest Neighbor)
 inline void my_resizeNN(const cv::Mat image, cv::Mat out, const double scale)
 {
 	for (int y = 0; y < image.rows * scale; y++)
@@ -40,7 +71,7 @@ inline void my_resizeNN(const cv::Mat image, cv::Mat out, const double scale)
 	return;
 }
 
-
+// HSVの値セット
 inline void my_valueSetHSV(cv::Mat out, int H, int S, int V)
 {
 	cv::Mat out_hsv = out;
@@ -59,7 +90,7 @@ inline void my_valueSetHSV(cv::Mat out, int H, int S, int V)
 	return;
 }
 
-
+// 肌検出
 inline void my_skinDetect(const cv::Mat image, cv::Mat out)
 {
 	cv::Mat image_hsv;
@@ -71,10 +102,6 @@ inline void my_skinDetect(const cv::Mat image, cv::Mat out)
 		{
 			cv::Vec3b vec = image_hsv.at<cv::Vec3b>(y, x);
 			int H = vec(0);
-			int S = vec(1);
-			int V = vec(2);
-
-			// printf("(%d, %d, %d)\n", H, S, V);
 
 			cv::Vec3b vec_rgb = image.at<cv::Vec3b>(y, x);
 
@@ -84,6 +111,42 @@ inline void my_skinDetect(const cv::Mat image, cv::Mat out)
 			}
 
 			out.at<cv::Vec3b>(y, x) = vec_rgb;
+		}
+	}
+
+	return;
+}
+
+// 平均化フィルタ
+inline void my_average(const cv::Mat image, cv::Mat out)
+{
+	int size = 1;
+	int mx, my;
+	cv::Vec3f c;
+	float w;
+
+	for (int y = 0; y < image.rows; y++)
+	{
+		for (int x = 0; x < image.cols; x++)
+		{
+			c = cv::Vec3f(0.0f, 0.0f, 0.0f);
+
+			for (int dy = -size; dy <= size; dy++)
+			{
+				for (int dx = -size; dx <= size; dx++)
+				{
+					mx = my_mirror(x + dx, 0, image.cols);
+					my = my_mirror(y + dy, 0, image.rows);
+
+					w = 1.0f / 9.0f;
+
+					cv::Vec3b vec = image.at<cv::Vec3b>(my, mx);
+					c += (cv::Vec3f)vec * w;
+				}
+			}
+
+			c = my_clamp(c, 0.0f, 255.0f);
+			out.at<cv::Vec3b>(y, x) = (cv::Vec3b)c;
 		}
 	}
 
