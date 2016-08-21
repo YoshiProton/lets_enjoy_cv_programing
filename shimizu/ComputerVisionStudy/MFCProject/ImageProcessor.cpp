@@ -13,7 +13,7 @@ CImageProcessor::~CImageProcessor()
 
 
 ///<summary>
-///保存先のファイルパスを生成
+///保存先のファイルパスを生成（OpenCV用としてマルチバイトキャラ専用）
 ///</summary>
 void CImageProcessor::GetNewFilePath(LPSTR lpSrc, LPSTR lpFile, LPSTR lpDest)
 {
@@ -23,7 +23,7 @@ void CImageProcessor::GetNewFilePath(LPSTR lpSrc, LPSTR lpFile, LPSTR lpDest)
 
 
 ///<summary>
-///CString(ワイドキャラ)型のファイルパスをstd::string型に変換
+///CString(ワイドキャラ)型のファイルパスをstd::string型に変換（OpenCV用）
 ///</summary>
 std::string CImageProcessor::GetMultiBytePath(CString filePath)
 {
@@ -40,12 +40,12 @@ std::string CImageProcessor::GetMultiBytePath(CString filePath)
 void CImageProcessor::ShowPictureDlg(LPCOLORREF pixelData, BITMAPINFO* bmpInfo)
 {
 	CImage* image = new CImage;
-	image->Create(bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight, bmpInfo->bmiHeader.biBitCount);
+	image->Create(bmpInfo->bmiHeader.biWidth, bmpInfo->bmiHeader.biHeight, bmpInfo->bmiHeader.biBitCount);
 
 	StretchDIBits(
-		image->GetDC(), 0, 0,
-		bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight, 0, 0,
-		bmpInfo->bmiHeader.biWidth, -1 * bmpInfo->bmiHeader.biHeight,
+		image->GetDC(), //HDC
+		0, 0, bmpInfo->bmiHeader.biWidth, bmpInfo->bmiHeader.biHeight, //コピー先サイズ
+		0, 0, bmpInfo->bmiHeader.biWidth, bmpInfo->bmiHeader.biHeight, //コピー元サイズ
 		pixelData, bmpInfo, DIB_RGB_COLORS, SRCCOPY);
 
 	CPictureDlg dlg(image);
@@ -62,35 +62,45 @@ void CImageProcessor::ShowPictureDlg(LPCOLORREF pixelData, BITMAPINFO* bmpInfo)
 
 ///<summary>
 ///	OpenCVのimageデータであるMat型データをMFCのCImage型オブジェクトに変換してダイアログ表示（作成中）
-////http://chichimotsu.hateblo.jp/entry/20121130/1354265478
 ///</summary>
-void CImageProcessor::ShowPictureDlg(cv::Mat m_matCVImg)
+void CImageProcessor::ShowPictureDlg(cv::Mat cvImg)
 {
-	cv::Size size = m_matCVImg.size();
+	cv::Size size = cvImg.size();
 
-	cv::flip(m_matCVImg, m_matCVImg, 0);
+	// 上下反転
+	cv::flip(cvImg, cvImg, 0);
+
+	BITMAPINFO bmpInfo;
+	bmpInfo.bmiHeader.biBitCount = cvImg.channels() * 8;
+	bmpInfo.bmiHeader.biWidth = size.width;
+	bmpInfo.bmiHeader.biHeight = size.height;
+	bmpInfo.bmiHeader.biPlanes = 1;
+	bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmpInfo.bmiHeader.biCompression = BI_RGB;
+	bmpInfo.bmiHeader.biClrImportant =
+		bmpInfo.bmiHeader.biClrUsed =
+		bmpInfo.bmiHeader.biSizeImage =
+		bmpInfo.bmiHeader.biXPelsPerMeter =
+		bmpInfo.bmiHeader.biYPelsPerMeter = 0;
 
 	CImage* image = new CImage;
-	image->Create(size.width, size.height, 24);
-
-	BITMAPINFO bitInfo;
-	bitInfo.bmiHeader.biBitCount = 24;
-	bitInfo.bmiHeader.biWidth = size.width;
-	bitInfo.bmiHeader.biHeight = size.height;
-	bitInfo.bmiHeader.biPlanes = 1;
-	bitInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitInfo.bmiHeader.biCompression = BI_RGB;
-	bitInfo.bmiHeader.biClrImportant =
-		bitInfo.bmiHeader.biClrUsed =
-		bitInfo.bmiHeader.biSizeImage =
-		bitInfo.bmiHeader.biXPelsPerMeter =
-		bitInfo.bmiHeader.biYPelsPerMeter = 0;
+	image->Create(bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, bmpInfo.bmiHeader.biBitCount);
+	//HDC hdc = image->GetDC();
 
 	StretchDIBits(
-		image->GetDC(), 0, 0,
-		size.width, size.height, 0, 0,
-		size.width, size.height,
-		m_matCVImg.data, &bitInfo, DIB_RGB_COLORS, SRCCOPY);
+		image->GetDC(), //HDC
+		0, 0, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight,//コピー先サイズ
+		0, 0, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight,//コピー元サイズ
+		cvImg.data, &bmpInfo, DIB_RGB_COLORS, SRCCOPY);
+
+	//http://chichimotsu.hateblo.jp/entry/20121130/1354265478
+	//HBITMAP hbmp = CreateCompatibleBitmap(hdc, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight);
+	//SetDIBits(hdc, hbmp, 0, bmpInfo.bmiHeader.biHeight, cvImg.data, &bmpInfo, DIB_RGB_COLORS);
+	//HDC hdc2 = CreateCompatibleDC(hdc);
+	//SelectObject(hdc2, hbmp);
+	//BitBlt(hdc, 0, 0, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, hdc2, 0, 0, SRCCOPY);
+	//DeleteDC(hdc2);
+	//DeleteObject(hbmp);
 
 	CPictureDlg dlg(image);
 	dlg.DoModal();

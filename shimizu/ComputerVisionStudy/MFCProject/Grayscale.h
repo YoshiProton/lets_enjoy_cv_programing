@@ -7,8 +7,8 @@ public:
 	CGrayscale();
 	~CGrayscale();
 
-	void ProcessFullOpenCV(CString);
-	void ProcessHalfOpenCV(CString);
-	void ProcessFullScratch(LPCOLORREF, BITMAPINFO*);
+	void ProcessByFullOpenCV(CString);
+	void ProcessByPartOpenCV(CString);
+	void ProcessByFullScratch(LPCOLORREF, BITMAPINFO*);
 };
 

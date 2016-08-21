@@ -7,6 +7,7 @@
 #include <shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
 
+#include "Utility.h"
 
 class CImageProcessor
 {

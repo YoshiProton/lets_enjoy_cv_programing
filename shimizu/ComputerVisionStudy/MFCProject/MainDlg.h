@@ -44,8 +44,6 @@ private:
 	CString filePath;
 	LPCOLORREF pixelData;
 	BITMAPINFO bmpInfo;
-	UINT WIDTH;
-	UINT HEIGHT;
 	void LoadImage(HDC);
 	void ShowImage(HDC);
 

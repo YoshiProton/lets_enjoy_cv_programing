@@ -15,7 +15,7 @@
 #include "Grayscale.h"
 #include "Resize.h"
 #include "ColorSpaceDlg.h"
-#include "HSVFilter.h"
+#include "HueFilter.h"
 #include "Utility.h"
 
 #ifdef _DEBUG
@@ -127,7 +127,6 @@ BOOL CMainDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 大きいアイコンの設定
 	SetIcon(m_hIcon, FALSE);		// 小さいアイコンの設定
 
-	// TODO: 初期化をここに追加します。
 	int err = 0;
 	UINT statusText[2] = { 0, IDS_ABOUTBOX };
 
@@ -217,17 +216,18 @@ void CMainDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	if (pixelData != NULL)
 	{
 		UINT width = bmpInfo.bmiHeader.biWidth;
-		UINT height = -1 * bmpInfo.bmiHeader.biHeight;
+		UINT height = bmpInfo.bmiHeader.biHeight;
 
 		if (width >= point.x &&  height >= point.y)
 		{
-			COLORREF pixel = pixelData[point.x + point.y * WIDTH];
+			COLORREF pixel = pixelData[point.x + (height - point.y) * width];
 
-			BYTE r = GetRValue(pixel);
-			BYTE g = GetGValue(pixel);
-			BYTE b = GetBValue(pixel);
+			BYTE r = CUtility::GetR(pixel);
+			BYTE g = CUtility::GetG(pixel);
+			BYTE b = CUtility::GetB(pixel);
 
-			int h ,s,v;
+			int h ,s, v;
+			h = s = v = 0;
 			CUtility::ConvertRGBtoHSV(r, g, b, &h, &s, &v);
 
 			CString msg;
@@ -248,24 +248,27 @@ void CMainDlg::LoadImage(HDC hdc)
 	CImage image;
 	image.Load(filePath);
 
-	WIDTH = image.GetWidth();
-	HEIGHT = image.GetHeight();
+	//CBitmap bitmap;
+	//bitmap.Attach(image.Detach());
+
+	int width = image.GetWidth();
+	int height = image.GetHeight();
 
 	if (sizeof(pixelData) > 0)
 		delete[] pixelData;
 
-	pixelData = new COLORREF[WIDTH * HEIGHT];
+	pixelData = new COLORREF[width * height];
 
 	HBITMAP hBitmap = (HBITMAP)image;
 
 	bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmpInfo.bmiHeader.biWidth = WIDTH;
-	bmpInfo.bmiHeader.biHeight = -(INT)HEIGHT;
+	bmpInfo.bmiHeader.biWidth = width;
+	bmpInfo.bmiHeader.biHeight = height;
 	bmpInfo.bmiHeader.biPlanes = 1;
 	bmpInfo.bmiHeader.biBitCount = 32;
 	bmpInfo.bmiHeader.biCompression = BI_RGB;
 
-	GetDIBits(hdc, hBitmap, 0, HEIGHT, pixelData, &bmpInfo, DIB_RGB_COLORS);
+	GetDIBits(hdc, hBitmap, 0, height, pixelData, &bmpInfo, DIB_RGB_COLORS);
 
 	if (image)
 	{
@@ -281,7 +284,7 @@ void CMainDlg::LoadImage(HDC hdc)
 ///</summary>
 void CMainDlg::ShowImage(HDC hdc)
 {
-	SetDIBitsToDevice(hdc, 0, 0, WIDTH, HEIGHT, 0, 0, 0, HEIGHT, pixelData, &bmpInfo, DIB_RGB_COLORS);
+	SetDIBitsToDevice(hdc, 0, 0, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 0, 0, 0, bmpInfo.bmiHeader.biHeight, pixelData, &bmpInfo, DIB_RGB_COLORS);
 }
 
 
@@ -385,7 +388,7 @@ void CMainDlg::OnMenuOriginalFullOpenCV()
 
 	////5. For image you need a header.Create it by using BITMAPINFO structure
 	//BITMAPINFO bitInfo;
-	//bitInfo.bmiHeader.biBitCount = 24;
+	//bitInfo.bmiHeader.biBitCount = 32;
 	//bitInfo.bmiHeader.biWidth = size.width;
 	//bitInfo.bmiHeader.biHeight = size.height;
 	//bitInfo.bmiHeader.biPlanes = 1;
@@ -417,7 +420,7 @@ void CMainDlg::OnMenuOriginalFullOpenCV()
 #pragma endregion
 
 	COriginal process;
-	process.ProcessFullOpenCV(filePath);
+	process.ProcessByFullOpenCV(filePath);
 }
 
 ///<summary>
@@ -426,7 +429,7 @@ void CMainDlg::OnMenuOriginalFullOpenCV()
 void CMainDlg::OnMenuOriginalScratch()
 {
 	COriginal process;
-	process.ProcessFullScratch(pixelData, &bmpInfo);
+	process.ProcessByFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion
@@ -440,7 +443,7 @@ void CMainDlg::OnMenuOriginalScratch()
 void CMainDlg::OnMenuGrayscaleFullOpenCV()
 {
 	CGrayscale process;
-	process.ProcessFullOpenCV(filePath);
+	process.ProcessByFullOpenCV(filePath);
 }
 
 ///<summary>
@@ -449,7 +452,7 @@ void CMainDlg::OnMenuGrayscaleFullOpenCV()
 void CMainDlg::OnMenuGrayscaleHalfOpenCV()
 {
 	CGrayscale process;
-	process.ProcessHalfOpenCV(filePath);
+	process.ProcessByPartOpenCV(filePath);
 }
 
 ///<summary>
@@ -458,7 +461,7 @@ void CMainDlg::OnMenuGrayscaleHalfOpenCV()
 void CMainDlg::OnMenuGrayscaleScratch()
 {
 	CGrayscale process;
-	process.ProcessFullScratch(pixelData, &bmpInfo);
+	process.ProcessByFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion
@@ -472,7 +475,7 @@ void CMainDlg::OnMenuGrayscaleScratch()
 void CMainDlg::OnMenuResizeFullOpenCV()
 {
 	CResize process;
-	process.ProcessFullOpenCV(filePath);
+	process.ProcessByFullOpenCV(filePath);
 }
 
 ///<summary>
@@ -481,7 +484,7 @@ void CMainDlg::OnMenuResizeFullOpenCV()
 void CMainDlg::OnMenuResizeHalfOpenCV()
 {
 	CResize process;
-	process.ProcessHalfOpenCV(filePath);
+	process.ProcessByPartOpenCV(filePath);
 }
 
 ///<summary>
@@ -490,7 +493,7 @@ void CMainDlg::OnMenuResizeHalfOpenCV()
 void CMainDlg::OnMenuResizeScratch()
 {
 	CResize process;
-	process.ProcessFullScratch(pixelData, &bmpInfo);
+	process.ProcessByFullScratch(pixelData, &bmpInfo);
 }
 
 #pragma endregion
@@ -503,18 +506,9 @@ void CMainDlg::OnMenuResizeScratch()
 ///</summary>
 void CMainDlg::OnMenuNew()
 {
-	//OpenCVで全部やる方式（RBG<-->HSV変換）
-	cv::Mat srcImg(256, 256, CV_8UC3);
+	//全部OpenCVでやる方式（RBG<-->HSV変換）
+	cv::Mat srcImg(256, 256, CV_8UC3, cv::Scalar(100, 100, 100));
 	cv::Mat dstImg(256, 256, CV_8UC3);
-	for (int y = 0; y<srcImg.rows; y++) 
-	{
-		for (int x = 0; x<srcImg.cols; x++) 
-		{
-			srcImg.at<cv::Vec3b>(y, x)[0] = 100; 
-			srcImg.at<cv::Vec3b>(y, x)[1] = 100;
-			srcImg.at<cv::Vec3b>(y, x)[2] = 100;
-		}
-	}
 	cv::cvtColor(srcImg, dstImg, cv::COLOR_HSV2BGR);
 	cv::namedWindow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", cv::WINDOW_AUTOSIZE);
 	cv::imshow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", dstImg);
@@ -526,17 +520,20 @@ void CMainDlg::OnMenuNew()
 	dlg.SetValues(&width, &height, &r, &g, &b);
 	if (dlg.DoModal() == IDOK)
 	{
-		//フルスクラッチでRBG<-->HSV変換
+		//スクラッチでRBG<-->HSV変換
 		cv::Mat img(cv::Size(width, height), CV_8UC3, cv::Scalar(b, g, r));
 		cv::namedWindow("スクラッチでRBG<-->HSV変換", cv::WINDOW_AUTOSIZE);
 		cv::imshow("スクラッチでRBG<-->HSV変換", img);
 	}
 }
 
-
+///<summary>
+///課題2の4
+///</summary>
 void CMainDlg::OnMenuFilterColor()
 {
-	CHSVFilter filter;
-	filter.ProcessFullOpenCV(filePath);
+	CHueFilter process;
+	process.ProcessByOpenCV(filePath);
+	process.ProcessByScratch(pixelData, &bmpInfo);
 }
 
