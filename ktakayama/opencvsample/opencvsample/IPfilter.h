@@ -52,8 +52,8 @@ inline void my_average(const cv::Mat image, cv::Mat out)
 	return;
 }
 
-// ガウシアンフィルタ(未実装)
-inline void my_gaussian(const cv::Mat image, cv::Mat out, const int size)
+// ガウシアンフィルタ
+inline void my_gaussian(const cv::Mat image, cv::Mat out, const float sigma, const int size)
 {
 	int wsize = size * 2 + 1;
 	cv::Mat filter(wsize, wsize, CV_32F);
@@ -62,7 +62,9 @@ inline void my_gaussian(const cv::Mat image, cv::Mat out, const int size)
 	{
 		for (int x = 0; x < wsize; x++)
 		{
-			filter.at<float>(y, x) = 1.0f / (float)(size * 2 * wsize);
+			filter.at<float>(y, x) =
+				exp(- ((x - size) * (x - size) + (y - size) * (y - size)) / (2.0f * sigma * sigma))
+				/ (2.0f * myPI * sigma * sigma);
 		}
 	}
 
@@ -71,9 +73,40 @@ inline void my_gaussian(const cv::Mat image, cv::Mat out, const int size)
 	return;
 }
 
+inline void my_gaussian(const cv::Mat image, cv::Mat out, const float sigma)
+{
+	my_gaussian(image, out, sigma, 1);
+	return;
+}
+
 inline void my_gaussian(const cv::Mat image, cv::Mat out)
 {
-	my_gaussian(image, out, 1);
+	my_gaussian(image, out, 1.0f);
+	return;
+}
+
+// ガウシアンフィルタ(パスカル)
+inline void my_gaussian_pascal(const cv::Mat image, cv::Mat out, const int size)
+{
+	int wsize = size * 2 + 1;
+	cv::Mat filter(wsize, wsize, CV_32F);
+
+	for (int y = 0; y < wsize; y++)
+	{
+		for (int x = 0; x < wsize; x++)
+		{
+			filter.at<float>(y, x) = (float)my_combination(wsize - 1, x) * (float)my_combination(wsize - 1, y) / (float)pow(2, (wsize - 1) * 2);
+		}
+	}
+
+	my_filter(image, out, filter);
+
+	return;
+}
+
+inline void my_gaussian_pascal(const cv::Mat image, cv::Mat out)
+{
+	my_gaussian_pascal(image, out, 1);
 	return;
 }
 
@@ -126,5 +159,39 @@ inline void my_sobel_y(const cv::Mat image, cv::Mat out)
 
 	my_filter(image, out, filter);
 
+	return;
+}
+
+// ラプラシアンフィルタ
+inline void my_laplacian(const cv::Mat image, cv::Mat out)
+{
+	cv::Mat filter = (cv::Mat_<float>(3, 3) <<
+		0.0f, 1.0f, 0.0f,
+		1.0f, -4.0f, 1.0f,
+		0.0f, 1.0f, 0.0f);
+
+	my_filter(image, out, filter);
+
+	return;
+}
+
+// 鮮鋭化フィルタ
+inline void my_sharpening(const cv::Mat image, cv::Mat out, float scale)
+{
+	float k = scale / 9.0f;
+
+	cv::Mat filter = (cv::Mat_<float>(3, 3) <<
+		-k, -k, -k,
+		-k, 1.0f + k * 8.0f, -k,
+		-k, -k, -k);
+
+	my_filter(image, out, filter);
+
+	return;
+}
+
+inline void my_sharpening(const cv::Mat image, cv::Mat out)
+{
+	my_sharpening(image, out, 1.0f);
 	return;
 }

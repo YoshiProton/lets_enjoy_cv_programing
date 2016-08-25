@@ -51,6 +51,24 @@ int main()
 	my_average(input, image_average, 3);
 	cv::imwrite("image/task3/lena_average.jpg", image_average); // 課題3-1
 
+	// ガウシアンフィルタテスト
+	cv::Mat image_gaussian(rows, cols, CV_8UC3);
+	my_gaussian(input, image_gaussian, 0.8f, 3);
+	cv::imwrite("image/task3/lena_gaussian1.jpg", image_gaussian);
+	my_gaussian(input, image_gaussian, 1.0f, 3);
+	cv::imwrite("image/task3/lena_gaussian2.jpg", image_gaussian);
+	my_gaussian(input, image_gaussian, 1.3f, 3);
+	cv::imwrite("image/task3/lena_gaussian3.jpg", image_gaussian);
+
+	// ガウシアンフィルタテスト(Pascal)
+	cv::Mat image_gaussian_pascal(rows, cols, CV_8UC3);
+	my_gaussian_pascal(input, image_gaussian_pascal, 1);
+	cv::imwrite("image/task3/lena_gaussian_pascal1.jpg", image_gaussian_pascal);
+	my_gaussian_pascal(input, image_gaussian_pascal, 2);
+	cv::imwrite("image/task3/lena_gaussian_pascal2.jpg", image_gaussian_pascal);
+	my_gaussian_pascal(input, image_gaussian_pascal, 3);
+	cv::imwrite("image/task3/lena_gaussian_pascal3.jpg", image_gaussian_pascal);
+
 	// プリューウィットフィルタテスト
 	cv::Mat image_prewitt(rows, cols, CV_8UC3);
 	my_prewitt_x(input, image_prewitt);
@@ -62,6 +80,16 @@ int main()
 	my_sobel_x(input, image_sobel);
 	// my_sobel_y(input, image_sobel);
 	cv::imwrite("image/task3/lena_sobel.jpg", image_sobel);
+
+	// ラプラシアンフィルタテスト
+	cv::Mat image_laplacian(rows, cols, CV_8UC3);
+	my_laplacian(input, image_laplacian);
+	cv::imwrite("image/task3/lena_laplacian.jpg", image_laplacian);
+
+	// 鮮鋭化フィルタテスト
+	cv::Mat image_sharpening(rows, cols, CV_8UC3);
+	my_sharpening(input, image_sharpening);
+	cv::imwrite("image/task3/lena_sharpening.jpg", image_sharpening);
 
 	return 0;
 }

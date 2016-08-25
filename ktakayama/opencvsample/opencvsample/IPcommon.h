@@ -1,8 +1,11 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 #include <opencv2/opencv_lib.hpp>
+#include <stdio.h>
 
 using namespace cv;
+
+#define myPI 3.14159265359f
 
 // clampˆ—
 inline float my_clamp(float x, float min, float max) {
@@ -31,4 +34,19 @@ inline int my_mirror(int x, int min, int max) {
 	}
 
 	return x;
+}
+
+// Combination
+inline int my_combination(int x, int y) {
+
+	if (y > x) return 0;
+	if (y == 0 || y == x) return 1;
+
+	float n = 1.0f;
+	for (int i = 1; i <= y; i++) {
+		n *= (float)(x - y + i) / (float)i;
+		// printf("%dC%d = %f\n", x, y, n);
+	}
+
+	return (int)n;
 }
