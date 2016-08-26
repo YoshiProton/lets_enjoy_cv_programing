@@ -1,8 +1,7 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/opencv_lib.hpp>
+#include "IPcommon.h"
+#include "IPfilter.h"
 
-using namespace cv;
-
+// グレースケール化
 inline void my_grayscale(const cv::Mat image, cv::Mat out)
 {
 	for (int y = 0; y < image.rows; y++)
@@ -24,7 +23,7 @@ inline void my_grayscale(const cv::Mat image, cv::Mat out)
 	return;
 }
 
-
+// サイズ変更(Nearest Neighbor)
 inline void my_resizeNN(const cv::Mat image, cv::Mat out, const double scale)
 {
 	for (int y = 0; y < image.rows * scale; y++)
@@ -40,7 +39,7 @@ inline void my_resizeNN(const cv::Mat image, cv::Mat out, const double scale)
 	return;
 }
 
-
+// HSVの値セット
 inline void my_valueSetHSV(cv::Mat out, int H, int S, int V)
 {
 	cv::Mat out_hsv = out;
@@ -59,7 +58,7 @@ inline void my_valueSetHSV(cv::Mat out, int H, int S, int V)
 	return;
 }
 
-
+// 肌検出
 inline void my_skinDetect(const cv::Mat image, cv::Mat out)
 {
 	cv::Mat image_hsv;
@@ -71,10 +70,6 @@ inline void my_skinDetect(const cv::Mat image, cv::Mat out)
 		{
 			cv::Vec3b vec = image_hsv.at<cv::Vec3b>(y, x);
 			int H = vec(0);
-			int S = vec(1);
-			int V = vec(2);
-
-			// printf("(%d, %d, %d)\n", H, S, V);
 
 			cv::Vec3b vec_rgb = image.at<cv::Vec3b>(y, x);
 
