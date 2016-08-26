@@ -1,14 +1,20 @@
 #pragma once
 #include "ImageProcessor.h"
 
-class CHueFilter :
+class CBilateralFilter :
 	public CImageProcessor
 {
 public:
-	CHueFilter();
-	~CHueFilter();
+	CBilateralFilter();
+	~CBilateralFilter();
+
+	void SetKernel(int);
 
 	void ProcessByFullOpenCV(CString);
+	void ProcessByPartOpenCV(CString);
 	void ProcessByFullScratch(LPCOLORREF, BITMAPINFO*);
+
+private:
+	int kernelSize;
 };
 

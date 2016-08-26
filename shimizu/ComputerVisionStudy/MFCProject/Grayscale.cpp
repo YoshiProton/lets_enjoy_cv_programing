@@ -101,7 +101,7 @@ void CGrayscale::ProcessByFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpIn
 		blue = CUtility::GetB(srcPixelData[i]);
 
 		density = (4 * red + 2 * green + blue) / 7;
-		dstPixelData[i] = RGB(density, density, density);
+		dstPixelData[i] = GetPixelValue(density, density, density);
 	}
 
 	ShowPictureDlg(dstPixelData, bmpInfo);

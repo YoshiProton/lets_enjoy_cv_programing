@@ -113,3 +113,11 @@ void CImageProcessor::ShowPictureDlg(cv::Mat cvImg)
 	}
 }
 
+
+///<summary>
+///	BYTEå^Ç≈Ç†ÇÈRGBílÇàÍÇ¬ÇÃCOLORREFå^Ç…åãçáÇ∑ÇÈ
+///</summary>
+COLORREF CImageProcessor::GetPixelValue(BYTE r, BYTE g, BYTE b)
+{
+	return (COLORREF)(((BYTE)(b) | ((WORD)((BYTE)(g)) << 8)) | (((DWORD)(BYTE)(r)) << 16));
+}

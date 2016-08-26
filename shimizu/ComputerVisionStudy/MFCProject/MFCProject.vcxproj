@@ -186,15 +186,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BilateralFilter.h" />
     <ClInclude Include="ColorSpaceDlg.h" />
     <ClInclude Include="Grayscale.h" />
     <ClInclude Include="HueFilter.h" />
     <ClInclude Include="HueFilterDlg.h" />
     <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="KernelFilter.h" />
     <ClInclude Include="MainDlg.h" />
+    <ClInclude Include="MedianFilter.h" />
     <ClInclude Include="MFCProject.h" />
     <ClInclude Include="Original.h" />
     <ClInclude Include="PictureDlg.h" />
+    <ClInclude Include="ProcessDlg.h" />
     <ClInclude Include="Resize.h" />
     <ClInclude Include="ResizeDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -203,15 +207,19 @@
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BilateralFilter.cpp" />
     <ClCompile Include="ColorSpaceDlg.cpp" />
     <ClCompile Include="Grayscale.cpp" />
     <ClCompile Include="HueFilter.cpp" />
     <ClCompile Include="HueFilterDlg.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
+    <ClCompile Include="KernelFilter.cpp" />
     <ClCompile Include="MainDlg.cpp" />
+    <ClCompile Include="MedianFilter.cpp" />
     <ClCompile Include="MFCProject.cpp" />
     <ClCompile Include="Original.cpp" />
     <ClCompile Include="PictureDlg.cpp" />
+    <ClCompile Include="ProcessDlg.cpp" />
     <ClCompile Include="Resize.cpp" />
     <ClCompile Include="ResizeDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
