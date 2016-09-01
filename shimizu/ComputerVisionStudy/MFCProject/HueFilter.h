@@ -8,7 +8,7 @@ public:
 	CHueFilter();
 	~CHueFilter();
 
-	void ProcessByOpenCV(CString);
-	void ProcessByScratch(LPCOLORREF, BITMAPINFO*);
+	void ProcessByFullOpenCV(CString);
+	void ProcessByFullScratch(LPCOLORREF, BITMAPINFO*);
 };
 

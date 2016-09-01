@@ -17,7 +17,7 @@ CHueFilter::~CHueFilter()
 /// 課題2の4
 ///	OpenCVを活用して簡単実装
 ///</summary>
-void CHueFilter::ProcessByOpenCV(CString filePath)
+void CHueFilter::ProcessByFullOpenCV(CString filePath)
 {
 	std::string path = this->GetMultiBytePath(filePath);
 	cv::Mat srcImage = cv::imread(path);
@@ -56,7 +56,7 @@ void CHueFilter::ProcessByOpenCV(CString filePath)
 ///<summary>
 ///	OpenCVを全く使わずにフルスクラッチ
 ///</summary>
-void CHueFilter::ProcessByScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo)
+void CHueFilter::ProcessByFullScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo)
 {
 	int start;
 	int end;
@@ -87,7 +87,7 @@ void CHueFilter::ProcessByScratch(LPCOLORREF srcPixelData, BITMAPINFO* bmpInfo)
 		}
 		else
 		{
-			dstPixelData[i] = RGB(0, 0, 0);
+			dstPixelData[i] = 0;
 		}
 	}
 

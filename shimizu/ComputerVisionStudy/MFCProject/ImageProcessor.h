@@ -20,5 +20,6 @@ protected:
 	void ShowPictureDlg(LPCOLORREF, BITMAPINFO*);
 	void GetNewFilePath(LPSTR, LPSTR, LPSTR);
 	std::string GetMultiBytePath(CString);
+	COLORREF GetPixelValue(BYTE, BYTE, BYTE);
 };
 

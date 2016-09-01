@@ -10,13 +10,17 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "Utility.h"
 #include "ImageProcessor.h"
+#include "ProcessDlg.h"
 #include "Original.h"
 #include "Grayscale.h"
 #include "Resize.h"
 #include "ColorSpaceDlg.h"
 #include "HueFilter.h"
-#include "Utility.h"
+#include "KernelFilter.h"
+#include "BilateralFilter.h"
+#include "MedianFilter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -77,22 +81,27 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_SIZE()
+	ON_WM_LBUTTONDOWN()
 	ON_COMMAND(ID_MENU_EXIT, &CMainDlg::OnMenuExit)
 	ON_COMMAND(ID_MENU_OPEN, &CMainDlg::OnMenuOpen)
 	ON_COMMAND(ID_MENU_SAVE, &CMainDlg::OnMenuSave)
 	ON_COMMAND(ID_MENU_ABOUT, &CMainDlg::OnMenuAbout)
-	ON_COMMAND(ID_MENU_ORIGINAL_FULLOCV, &CMainDlg::OnMenuOriginalFullOpenCV)
-	ON_COMMAND(ID_MENU_ORIGINAL_SCRATCH, &CMainDlg::OnMenuOriginalScratch)
-	ON_COMMAND(ID_MENU_GRAYSCALE_FULLOCV, &CMainDlg::OnMenuGrayscaleFullOpenCV)
-	ON_COMMAND(ID_MENU_GRAYSCALE_HALFOCV, &CMainDlg::OnMenuGrayscaleHalfOpenCV)
-	ON_COMMAND(ID_MENU_GRAYSCALE_SCRATCH, &CMainDlg::OnMenuGrayscaleScratch)
-	ON_COMMAND(ID_MENU_RESIZE_FULLOCV, &CMainDlg::OnMenuResizeFullOpenCV)
-	ON_COMMAND(ID_MENU_RESIZE_HALFOCV, &CMainDlg::OnMenuResizeHalfOpenCV)
-	ON_COMMAND(ID_MENU_RESIZE_SCRATCH, &CMainDlg::OnMenuResizeScratch)
+	ON_COMMAND(ID_MENU_ORIGINAL, &CMainDlg::OnMenuOriginal)
+	ON_COMMAND(ID_MENU_GRAYSCALE, &CMainDlg::OnMenuGrayscale)
+	ON_COMMAND(ID_MENU_RESIZE, &CMainDlg::OnMenuResize)
 	ON_COMMAND(ID_MENU_NEW, &CMainDlg::OnMenuNew)
-	ON_COMMAND(ID_MENU_FILTER_COLOR, &CMainDlg::OnMenuFilterColor)
-	ON_WM_SIZE()
-	ON_WM_LBUTTONDOWN()
+	ON_COMMAND(ID_MENU_FILTER_COLOR, &CMainDlg::OnMenuColorFilter)
+	ON_COMMAND(ID_MENU_AVERAGING_FILTER, &CMainDlg::OnMenuAveragingFilter)
+	ON_COMMAND(ID_MENU_GAUSSIAN_FILTER, &CMainDlg::OnMenuGaussianFilter)
+	ON_COMMAND(ID_MENU_DIFFERENCIAL_FILTER, &CMainDlg::OnMenuDifferencialFilter)
+	ON_COMMAND(ID_MENU_PREWITT_FILTER, &CMainDlg::OnMenuPrewittFilter)
+	ON_COMMAND(ID_MENU_SOBEL_FILTER, &CMainDlg::OnMenuSobelFilter)
+	ON_COMMAND(ID_MENU_LAPLACIAN_FILTER, &CMainDlg::OnMenuLaplacianFilter)
+	ON_COMMAND(ID_MENU_SHARPENING_FILTER, &CMainDlg::OnMenuSharpeningFilter)
+	ON_COMMAND(ID_MENU_BILATERAL_FILTER, &CMainDlg::OnMenuBilateralFilter)
+	ON_COMMAND(ID_MENU_NONLOCALMEAN_FILTER, &CMainDlg::OnMenuNonLocalMeanFilter)
+	ON_COMMAND(ID_MENU_MEDIAL_FILTER, &CMainDlg::OnMenuMedialFilter)
 END_MESSAGE_MAP()
 
 
@@ -345,12 +354,10 @@ void CMainDlg::OnMenuAbout()
 
 #pragma region 画像処理メニュー選択イベント
 
-#pragma region 元画像をそのまま表示
-
 ///<summary>
-///OpenCVを活用して簡単実装
+///元画像をそのまま表示
 ///</summary>
-void CMainDlg::OnMenuOriginalFullOpenCV()
+void CMainDlg::OnMenuOriginal()
 {
 #pragma region
 	///*
@@ -419,87 +426,78 @@ void CMainDlg::OnMenuOriginalFullOpenCV()
 	//}
 #pragma endregion
 
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
 	COriginal process;
-	process.ProcessByFullOpenCV(filePath);
+	switch (procMethod)
+	{
+	case 0://OpenCVを活用して簡単実装
+		process.ProcessByFullOpenCV(filePath);
+		break;
+	case 1://画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+		process.ProcessByPartOpenCV(filePath);
+		break;
+	case 2://OpenCVを全く使わずにフルスクラッチ
+		process.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
 }
 
 ///<summary>
-///OpenCVを全く使わずにフルスクラッチ
+///グレイスケール
 ///</summary>
-void CMainDlg::OnMenuOriginalScratch()
+void CMainDlg::OnMenuGrayscale()
 {
-	COriginal process;
-	process.ProcessByFullScratch(pixelData, &bmpInfo);
-}
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
 
-#pragma endregion
-
-
-#pragma region グレイスケール化
-
-///<summary>
-///OpenCVを活用して簡単実装
-///</summary>
-void CMainDlg::OnMenuGrayscaleFullOpenCV()
-{
 	CGrayscale process;
-	process.ProcessByFullOpenCV(filePath);
+	switch (procMethod)
+	{
+	case 0://OpenCVを活用して簡単実装
+		process.ProcessByFullOpenCV(filePath);
+		break;
+	case 1://画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+		process.ProcessByPartOpenCV(filePath);
+		break;
+	case 2://OpenCVを全く使わずにフルスクラッチ
+		process.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
 }
 
 ///<summary>
-///画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+///リサイズ
 ///</summary>
-void CMainDlg::OnMenuGrayscaleHalfOpenCV()
+void CMainDlg::OnMenuResize()
 {
-	CGrayscale process;
-	process.ProcessByPartOpenCV(filePath);
-}
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
 
-///<summary>
-///OpenCVを全く使わずにフルスクラッチ
-///</summary>
-void CMainDlg::OnMenuGrayscaleScratch()
-{
-	CGrayscale process;
-	process.ProcessByFullScratch(pixelData, &bmpInfo);
-}
-
-#pragma endregion
-
-
-#pragma region リサイズ
-
-///<summary>
-///OpenCVを活用して簡単実装
-///</summary>
-void CMainDlg::OnMenuResizeFullOpenCV()
-{
 	CResize process;
-	process.ProcessByFullOpenCV(filePath);
+	switch (procMethod)
+	{
+	case 0://OpenCVを活用して簡単実装
+		process.ProcessByFullOpenCV(filePath);
+		break;
+	case 1://画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+		process.ProcessByPartOpenCV(filePath);
+		break;
+	case 2://OpenCVを全く使わずにフルスクラッチ
+		process.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
 }
-
-///<summary>
-///画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
-///</summary>
-void CMainDlg::OnMenuResizeHalfOpenCV()
-{
-	CResize process;
-	process.ProcessByPartOpenCV(filePath);
-}
-
-///<summary>
-///OpenCVを全く使わずにフルスクラッチ
-///</summary>
-void CMainDlg::OnMenuResizeScratch()
-{
-	CResize process;
-	process.ProcessByFullScratch(pixelData, &bmpInfo);
-}
-
-#pragma endregion
-
-#pragma endregion
-
 
 ///<summary>
 ///課題2の3
@@ -528,12 +526,395 @@ void CMainDlg::OnMenuNew()
 }
 
 ///<summary>
-///課題2の4
+///色空間フィルタ
 ///</summary>
-void CMainDlg::OnMenuFilterColor()
+void CMainDlg::OnMenuColorFilter()
 {
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
 	CHueFilter process;
-	process.ProcessByOpenCV(filePath);
-	process.ProcessByScratch(pixelData, &bmpInfo);
+	switch (procMethod)
+	{
+	case 0://OpenCVを活用して簡単実装
+		process.ProcessByFullOpenCV(filePath);
+		break;
+	case 1://画像読み込み保存のみOpenCVを使用してピクセル操作はスクラッチ
+		//process.ProcessByPartOpenCV(filePath);
+		break;
+	case 2://OpenCVを全く使わずにフルスクラッチ
+		process.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
 }
 
+///<summary>
+///平均化フィルタ
+///</summary>
+void CMainDlg::OnMenuAveragingFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+#pragma region 平均化フィルタ用カーネル
+	const std::vector<std::vector<int>> kernel3
+	{
+		{ 1, 1, 1 },
+		{ 1, 1, 1 },
+		{ 1, 1, 1 },
+	};
+	const std::vector<std::vector<int>> kernel5
+	{ 
+		{ 1, 1, 1, 1, 1 }, 
+		{ 1, 1, 1, 1, 1 }, 
+		{ 1, 1, 1, 1, 1 }, 
+		{ 1, 1, 1, 1, 1 }, 
+		{ 1, 1, 1, 1, 1 },
+	};
+	const std::vector<std::vector<int>> kernel7
+	{
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1 },
+	};
+#pragma endregion
+
+	int normalize = 0;
+	//正規化用の分母の値を算出
+	normalize = 0;
+	for (auto row : kernel5)
+		for (auto col : row)
+			normalize += col;
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel5, normalize);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///ガウシアンフィルタ
+///</summary>
+void CMainDlg::OnMenuGaussianFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+#pragma region ガウシアンフィルタ用カーネル
+	const std::vector<std::vector<int>> kernel3
+	{
+		{ 1, 2, 1 },
+		{ 2, 4, 2 },
+		{ 1, 2, 1 },
+	};
+	const std::vector<std::vector<int>> kernel5
+	{
+		{ 1,  4,  6,  4, 1 },
+		{ 4, 16, 24, 16, 4 },
+		{ 6, 24, 36, 24, 6 },
+		{ 4, 16, 24, 16, 4 },
+		{ 1,  4,  6,  4, 1 },
+	};
+	const std::vector<std::vector<int>> kernel7
+	{
+		{  1,   6,  15,  20,  15,   6,  1 },
+		{  6,  36,  90, 120,  90,  36,  6 },
+		{ 15,  90, 225, 300, 225,  90, 15 },
+		{ 20, 120, 300, 400, 300, 120, 20 },
+		{ 15,  90, 225, 300, 225,  90, 15 },
+		{  6,  36,  90, 120,  90,  36,  6 },
+		{  1,   6,  15,  20,  15,   6,  1 },
+	};
+#pragma endregion
+
+	int normalize = 0;
+	//正規化用の分母の値を算出
+	normalize = 0;
+	for (auto row : kernel5)
+		for (auto col : row)
+			normalize += col;
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel5, normalize);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///微分フィルタ
+///</summary>
+void CMainDlg::OnMenuDifferencialFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	//縦フィルタと横フィルタを加算したカーネル
+	const std::vector<std::vector<int>> kernel
+	{
+		{  0,  1,  0 },
+		{  1,  0, -1 },
+		{  0, -1,  0 },
+	};
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel, 1);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///プリューウィットフィルタ
+///</summary>
+void CMainDlg::OnMenuPrewittFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	//縦フィルタと横フィルタを加算したカーネル
+	const std::vector<std::vector<int>> kernel
+	{
+		{  0,  1,  2 },
+		{ -1,  0,  1 },
+		{ -2, -1,  0 },
+	};
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel, 3);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///ソーベルフィルタ
+///</summary>
+void CMainDlg::OnMenuSobelFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	//縦フィルタと横フィルタを加算したカーネル
+	const std::vector<std::vector<int>> kernel
+	{
+		{  0,  2,  2 },
+		{ -2,  0,  2 },
+		{ -2, -2,  0 },
+	};
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel, 4);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///ラプラシアンフィルタ
+///</summary>
+void CMainDlg::OnMenuLaplacianFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	const std::vector<std::vector<int>> kernel
+	{
+		{ 0,  1, 0 },
+		{ 1, -4, 1 },
+		{ 0,  1, 0 },
+	};
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel, 1);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///鮮鋭化フィルタ
+///</summary>
+void CMainDlg::OnMenuSharpeningFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	const std::vector<std::vector<int>> kernel
+	{
+		{ -1, -1, -1 },
+		{ -1,  9, -1 },
+		{ -1, -1, -1 },
+	};
+
+	CKernelFilter filter;
+	filter.SetKernel(kernel, 1);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///バイラテラルフィルタ
+///</summary>
+void CMainDlg::OnMenuBilateralFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	CBilateralFilter filter;
+	filter.SetKernel(5);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+///<summary>
+///ノンローカルミーンフィルタ
+///</summary>
+void CMainDlg::OnMenuNonLocalMeanFilter()
+{
+	// TODO: ここにコマンド ハンドラー コードを追加します。
+}
+
+///<summary>
+///メディアンフィルタ
+///</summary>
+void CMainDlg::OnMenuMedialFilter()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	CMedianFilter filter;
+	filter.SetKernel(3);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+#pragma endregion

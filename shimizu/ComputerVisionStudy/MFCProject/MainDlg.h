@@ -48,21 +48,24 @@ private:
 	void ShowImage(HDC);
 
 public:
-	afx_msg void OnMenuExit();
+	afx_msg void OnMenuNew();
 	afx_msg void OnMenuOpen();
 	afx_msg void OnMenuSave();
 	afx_msg void OnMenuAbout();
+	afx_msg void OnMenuExit();
 
-	afx_msg void OnMenuOriginalFullOpenCV();
-	afx_msg void OnMenuOriginalScratch();
-
-	afx_msg void OnMenuGrayscaleFullOpenCV();
-	afx_msg void OnMenuGrayscaleHalfOpenCV();
-	afx_msg void OnMenuGrayscaleScratch();
-
-	afx_msg void OnMenuResizeFullOpenCV();
-	afx_msg void OnMenuResizeHalfOpenCV();
-	afx_msg void OnMenuResizeScratch();
-	afx_msg void OnMenuNew();
-	afx_msg void OnMenuFilterColor();
+	afx_msg void OnMenuOriginal();
+	afx_msg void OnMenuGrayscale();
+	afx_msg void OnMenuResize();
+	afx_msg void OnMenuColorFilter();
+	afx_msg void OnMenuAveragingFilter();
+	afx_msg void OnMenuGaussianFilter();
+	afx_msg void OnMenuDifferencialFilter();
+	afx_msg void OnMenuPrewittFilter();
+	afx_msg void OnMenuSobelFilter();
+	afx_msg void OnMenuLaplacianFilter();
+	afx_msg void OnMenuSharpeningFilter();
+	afx_msg void OnMenuBilateralFilter();
+	afx_msg void OnMenuNonLocalMeanFilter();
+	afx_msg void OnMenuMedialFilter();
 };

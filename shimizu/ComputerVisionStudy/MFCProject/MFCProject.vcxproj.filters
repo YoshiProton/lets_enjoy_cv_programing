@@ -25,6 +25,12 @@
     <Filter Include="ソース ファイル\lesson02">
       <UniqueIdentifier>{0eb0b006-7395-4908-b148-6911f27aa60e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\lesson03">
+      <UniqueIdentifier>{529471ef-0b13-484a-9614-06453474c06d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\lesson03">
+      <UniqueIdentifier>{4303133b-a171-463d-9868-e8d63aef907a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -69,11 +75,23 @@
     <ClInclude Include="Utility.h">
       <Filter>ヘッダー ファイル\lesson02</Filter>
     </ClInclude>
-    <ClInclude Include="HueFilterDlg.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="HueFilter.h">
       <Filter>ヘッダー ファイル\lesson02</Filter>
+    </ClInclude>
+    <ClInclude Include="HueFilterDlg.h">
+      <Filter>ヘッダー ファイル\lesson02</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessDlg.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelFilter.h">
+      <Filter>ヘッダー ファイル\lesson03</Filter>
+    </ClInclude>
+    <ClInclude Include="MedianFilter.h">
+      <Filter>ヘッダー ファイル\lesson03</Filter>
+    </ClInclude>
+    <ClInclude Include="BilateralFilter.h">
+      <Filter>ヘッダー ファイル\lesson03</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,11 +128,23 @@
     <ClCompile Include="Utility.cpp">
       <Filter>ソース ファイル\lesson02</Filter>
     </ClCompile>
-    <ClCompile Include="HueFilterDlg.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="HueFilter.cpp">
       <Filter>ソース ファイル\lesson02</Filter>
+    </ClCompile>
+    <ClCompile Include="HueFilterDlg.cpp">
+      <Filter>ソース ファイル\lesson02</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessDlg.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelFilter.cpp">
+      <Filter>ソース ファイル\lesson03</Filter>
+    </ClCompile>
+    <ClCompile Include="MedianFilter.cpp">
+      <Filter>ソース ファイル\lesson03</Filter>
+    </ClCompile>
+    <ClCompile Include="BilateralFilter.cpp">
+      <Filter>ソース ファイル\lesson03</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

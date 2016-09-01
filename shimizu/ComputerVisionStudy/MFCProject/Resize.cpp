@@ -262,17 +262,11 @@ void CResize::ResizeByBilinear(int width, int height, int dstWidth, int dstHeigh
 
 				//縦方向の補間
 				pDstImage->at<cv::Vec3b>((int)(y * ratio + n) + n, (int)(x * ratio)) 
-					= cv::Vec3b(
-					(uchar)(srcB + diffBV * linear), 
-					(uchar)(srcG + diffGV * linear), 
-					(uchar)(srcR + diffRV * linear));
+					= cv::Vec3b((uchar)(srcB + diffBV * linear), (uchar)(srcG + diffGV * linear), (uchar)(srcR + diffRV * linear));
 
 				//横方向の補間
 				pDstImage->at<cv::Vec3b>((int)(y * ratio), (int)(x * ratio + n)) 
-					= cv::Vec3b(
-					(uchar)(srcB + diffBH * linear),
-					(uchar)(srcG + diffGH * linear), 
-					(uchar)(srcR + diffRH * linear));
+					= cv::Vec3b((uchar)(srcB + diffBH * linear),(uchar)(srcG + diffGH * linear), (uchar)(srcR + diffRH * linear));
 
 				//補間した縦のピクセルを元に一つ前のブロックの横方向を補間
 
@@ -283,7 +277,7 @@ void CResize::ResizeByBilinear(int width, int height, int dstWidth, int dstHeigh
 				int prevG = (int)prevColorV[1];
 				int prevB = (int)prevColorV[0];
 
-				//基準点と右横のピクセルとの差をRGBで求める
+				//基準点とのピクセルとの差をRGBで求める
 				cv::Vec3b dstColorV = pDstImage->at<cv::Vec3b>((int)(y * ratio + n) + n, (int)(x * ratio));
 				int diffR = (int)dstColorV[2] - prevR;
 				int diffG = (int)dstColorV[1] - prevG;
@@ -293,10 +287,7 @@ void CResize::ResizeByBilinear(int width, int height, int dstWidth, int dstHeigh
 				{
 					linear = nx / ratio;
 					pDstImage->at<cv::Vec3b>((int)((y * ratio) + n) + n, (int)((x - 1) * ratio + nx)) 
-						= cv::Vec3b(
-						(uchar)(prevB + diffB * linear),
-						(uchar)(prevG + diffG * linear),
-						(uchar)(prevR + diffR * linear));
+						= cv::Vec3b((uchar)(prevB + diffB * linear),(uchar)(prevG + diffG * linear),(uchar)(prevR + diffR * linear));
 				}
 			}
 		}
@@ -342,11 +333,11 @@ void CResize::ResizeByBilinear(UINT width, UINT height, UINT dstWidth, UINT dstH
 
 				//縦方向の補間
 				int dstPosV = (int)(x * ratio) + (int)(y * ratio + n) * dstWidth;
-				dstPixelData[dstPosV] = RGB((BYTE)(srcR + diffRV * linear), (BYTE)(srcG + diffGV * linear), (BYTE)(srcB + diffBV * linear));
+				dstPixelData[dstPosV] = GetPixelValue((BYTE)(srcR + diffRV * linear), (BYTE)(srcG + diffGV * linear), (BYTE)(srcB + diffBV * linear));
 
 				//横方向の補間
 				int dstPosH = (int)(x * ratio + n) + (int)(y * ratio) * dstWidth;
-				dstPixelData[dstPosH] = RGB((BYTE)(srcR + diffRH * linear), (BYTE)(srcG + diffGH * linear), (BYTE)(srcB + diffBH * linear));
+				dstPixelData[dstPosH] = GetPixelValue((BYTE)(srcR + diffRH * linear), (BYTE)(srcG + diffGH * linear), (BYTE)(srcB + diffBH * linear));
 
 				//補間した縦のピクセルを元に一つ前のブロックの横方向を補間
 
@@ -358,7 +349,7 @@ void CResize::ResizeByBilinear(UINT width, UINT height, UINT dstWidth, UINT dstH
 				int prevG = (int)CUtility::GetG(dstPixelData[prevPosV]);
 				int prevB = (int)CUtility::GetB(dstPixelData[prevPosV]);
 
-				//基準点と右横のピクセルとの差をRGBで求める
+				//基準点とのピクセルとの差をRGBで求める
 				int diffR = (int)CUtility::GetR(dstPixelData[dstPosV]) - prevR;
 				int diffG = (int)CUtility::GetG(dstPixelData[dstPosV]) - prevG;
 				int diffB = (int)CUtility::GetB(dstPixelData[dstPosV]) - prevB;
@@ -366,9 +357,8 @@ void CResize::ResizeByBilinear(UINT width, UINT height, UINT dstWidth, UINT dstH
 				for (int nx = 1; nx < ratio; nx++)
 				{
 					linear = nx / ratio;
-
 					int dstPos = (int)((x - 1) * ratio + nx) + (int)((y * ratio) + n) * dstWidth;
-					dstPixelData[dstPos] = RGB((BYTE)(prevR + diffR * linear), (BYTE)(prevG + diffG * linear), (BYTE)(prevB + diffB * linear));
+					dstPixelData[dstPos] = GetPixelValue((BYTE)(prevR + diffR * linear), (BYTE)(prevG + diffG * linear), (BYTE)(prevB + diffB * linear));
 				}
 			}
 		}
@@ -497,7 +487,7 @@ void CResize::ResizeByBicubic(UINT width, UINT height, UINT dstWidth, UINT dstHe
 					}
 
 					int dstPos = (int)(trgX * ratio) + (int)(trgY * ratio) * dstWidth;
-					dstPixelData[dstPos] = RGB((BYTE)(sumR / sumW), (BYTE)(sumG / sumW), (BYTE)(sumB / sumW));
+					dstPixelData[dstPos] = GetPixelValue((BYTE)(sumR / sumW), (BYTE)(sumG / sumW), (BYTE)(sumB / sumW));
 				}
 			}
 		}
