@@ -196,59 +196,65 @@ inline void my_sharpening(const cv::Mat image, cv::Mat out)
 	return;
 }
 
-// メディアンフィルタ(実装途中)
-inline void my_median(const cv::Mat image, cv::Mat out)
+// メディアンフィルタ
+inline void my_median(const cv::Mat image, cv::Mat out, int size)
 {
-	int size = 1;
-	int wsize = 3;
-	int mx, my;
-	cv::Vec3f c;
-	float window[9];
+	int wsize = size * 2 + 1;
 
 	for (int y = 0; y < image.rows; y++)
 	{
 		for (int x = 0; x < image.cols; x++)
 		{
-			c = cv::Vec3f(0.0f, 0.0f, 0.0f);
+			cv::Vec3b c = cv::Vec3b(0, 0, 0);
+			cv::Vec3b window[1000];
 			for (int i = 0; i < wsize * wsize; i++)
 			{
-				window[i] = 0.0f;
+				window[i] = 0;
 			}
 
 			for (int dy = -size; dy <= size; dy++)
 			{
 				for (int dx = -size; dx <= size; dx++)
 				{
-					mx = my_mirror(x + dx, 0, image.cols);
-					my = my_mirror(y + dy, 0, image.rows);
+					int mx = my_mirror(x + dx, 0, image.cols);
+					int my = my_mirror(y + dy, 0, image.rows);
 
 					cv::Vec3b vec = image.at<cv::Vec3b>(my, mx);
 
-					// メディアンの導出(仮)
-					for (int i = 0; i < wsize * wsize; i++) 
+					int n = (dx + size) + (dy + size) * wsize;
+
+					for (int i = 0; i < 3; i++)
 					{
-						if (vec(1) > window[i])
+						for (int j = 0; j < n; j++)
 						{
-							for (int j = wsize * wsize - 1; j >= i + 1; j--)
+							if (vec(i) > window[j](i))
 							{
-								window[j] = window[j - 1];
+								for (int k = wsize * wsize - 1; k >= j + 1; k--)
+								{
+									window[k](i) = window[k - 1](i);
+								}
+								window[j](i) = vec(i);
+								break;
 							}
-							window[i] = vec(1);
-							break;
 						}
 					}
+
 					c = window[wsize * wsize / 2];
 				}
 			}
 
-			c = my_clamp(c, 0.0f, 255.0f);
-			out.at<cv::Vec3b>(y, x) = (cv::Vec3b)c;
+			out.at<cv::Vec3b>(y, x) = c;
 		}
 	}
 
 	return;
 }
 
+inline void my_median(const cv::Mat image, cv::Mat out)
+{
+	my_median(image, out, 1);
+	return;
+}
 
 // バイラテラルフィルタ
 inline void my_bilateral(const cv::Mat image, cv::Mat out, const int size, const float sigma1, const float sigma2)

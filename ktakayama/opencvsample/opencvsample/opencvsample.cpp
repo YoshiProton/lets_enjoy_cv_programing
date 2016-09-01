@@ -92,9 +92,11 @@ int main()
 	cv::imwrite("image/task3/lena_sharpening.jpg", image_sharpening);
 
 	// メディアンフィルタテスト
-	//cv::Mat image_median(rows, cols, CV_8UC3);
-	//my_median(input, image_median);
-	//cv::imwrite("image/task3/lena_median.jpg", image_median);
+	cv::Mat image_median(rows, cols, CV_8UC3);
+	my_median(input, image_median, 1);
+	cv::imwrite("image/task3/lena_median1.jpg", image_median);
+	my_median(input, image_median, 5);
+	cv::imwrite("image/task3/lena_median5.jpg", image_median);
 
 	// バイラテラルフィルタテスト
 	cv::Mat image_bilateral(rows, cols, CV_8UC3);
