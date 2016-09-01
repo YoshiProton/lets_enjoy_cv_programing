@@ -319,3 +319,85 @@ inline void my_bilateral(const cv::Mat image, cv::Mat out, const int size, const
 	return;
 }
 
+
+// ノンローカルミーンフィルタ
+inline void my_nonlocalmean(const cv::Mat image, cv::Mat out, const int size1, const int size2, const float sigma)
+{
+	for (int y = 0; y < image.rows; y++)
+	{
+		for (int x = 0; x < image.cols; x++)
+		{
+			cv::Vec3f c = cv::Vec3f(0.0f, 0.0f, 0.0f);
+			cv::Vec3f f = (cv::Vec3f)image.at<cv::Vec3b>(y, x) / 255.0f;
+
+			cv::Vec3f wn = Vec3f(0.0f, 0.0f, 0.0f); // 分子
+			cv::Vec3f wd = Vec3f(0.0f, 0.0f, 0.0f); // 分母
+
+			for (int dy = -size1; dy <= size1; dy++)
+			{
+				for (int dx = -size1; dx <= size1; dx++)
+				{
+					int mx = my_mirror(x + dx, 0, image.cols);
+					int my = my_mirror(y + dy, 0, image.rows);
+
+					cv::Vec3f fd = (cv::Vec3f)image.at<cv::Vec3b>(my, mx) / 255.0f;
+					cv::Vec3f w;
+
+					cv::Vec3f w_local = cv::Vec3f(0.0f, 0.0f, 0.0f);
+					for (int dy2 = -size2; dy2 <= size2; dy2++)
+					{
+						for (int dx2 = -size2; dx2 <= size2; dx2++)
+						{
+							int mx2 = my_mirror(x + dx + dx2, 0, image.cols);
+							int my2 = my_mirror(y + dy + dy2, 0, image.rows);
+
+							cv::Vec3f fd2 = (cv::Vec3f)image.at<cv::Vec3b>(my2, mx2) / 255.0f;
+
+							for (int i = 0; i < 3; i++)
+							{
+								w_local(i) += (float)((fd2(i) - fd(i)) * (fd2(i) - fd(i)));
+							}
+						}
+					}
+
+					for (int i = 0; i < 3; i++)
+					{
+						w(i) = exp(-w_local(i) / (2.0f * sigma * sigma));
+
+						wn(i) += w(i) * fd(i);
+						wd(i) += w(i);
+					}
+				}
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				c(i) = wn(i) / wd(i);
+			}
+
+			c = my_clamp(c, 0.0f, 1.0f) * 255.0f;
+			out.at<cv::Vec3b>(y, x) = (cv::Vec3b)c;
+		}
+	}
+
+	return;
+}
+
+inline void my_nonlocalmean(const cv::Mat image, cv::Mat out)
+{
+	my_nonlocalmean(image, out, 1, 1, 0.05f);
+
+	return;
+}
+
+inline void my_nonlocalmean(const cv::Mat image, cv::Mat out, const int size1, const int size2,  const float sigma, const int loop)
+{
+	my_nonlocalmean(image, out, size1, size2, sigma);
+	for (int i = 0; i < loop - 1; i++)
+	{
+		my_nonlocalmean(out, out, size1, size2, sigma);
+	}
+
+	return;
+}
+

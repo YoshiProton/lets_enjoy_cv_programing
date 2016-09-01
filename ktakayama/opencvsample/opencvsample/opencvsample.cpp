@@ -105,5 +105,14 @@ int main()
 	my_bilateral(input, image_bilateral, 1, 1.0f, 0.05f, 20);
 	cv::imwrite("image/task3/lena_bilateral20.jpg", image_bilateral);
 
+	// ノンローカルミーンフィルタテスト
+	cv::Mat image_nonlocalmean(rows, cols, CV_8UC3);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f);
+	cv::imwrite("image/task3/lena_nonlocalmean01.jpg", image_nonlocalmean);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f, 5);
+	cv::imwrite("image/task3/lena_nonlocalmean05.jpg", image_nonlocalmean);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f, 20);
+	cv::imwrite("image/task3/lena_nonlocalmean20.jpg", image_nonlocalmean);
+
 	return 0;
 }
