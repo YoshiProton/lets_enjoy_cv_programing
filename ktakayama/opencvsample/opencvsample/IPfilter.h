@@ -176,7 +176,7 @@ inline void my_laplacian(const cv::Mat image, cv::Mat out)
 }
 
 // 鮮鋭化フィルタ
-inline void my_sharpening(const cv::Mat image, cv::Mat out, float scale)
+inline void my_sharpening(const cv::Mat image, cv::Mat out, const float scale)
 {
 	float k = scale / 9.0f;
 
@@ -195,3 +195,127 @@ inline void my_sharpening(const cv::Mat image, cv::Mat out)
 	my_sharpening(image, out, 1.0f);
 	return;
 }
+
+// メディアンフィルタ(実装途中)
+inline void my_median(const cv::Mat image, cv::Mat out)
+{
+	int size = 1;
+	int wsize = 3;
+	int mx, my;
+	cv::Vec3f c;
+	float window[9];
+
+	for (int y = 0; y < image.rows; y++)
+	{
+		for (int x = 0; x < image.cols; x++)
+		{
+			c = cv::Vec3f(0.0f, 0.0f, 0.0f);
+			for (int i = 0; i < wsize * wsize; i++)
+			{
+				window[i] = 0.0f;
+			}
+
+			for (int dy = -size; dy <= size; dy++)
+			{
+				for (int dx = -size; dx <= size; dx++)
+				{
+					mx = my_mirror(x + dx, 0, image.cols);
+					my = my_mirror(y + dy, 0, image.rows);
+
+					cv::Vec3b vec = image.at<cv::Vec3b>(my, mx);
+
+					// メディアンの導出(仮)
+					for (int i = 0; i < wsize * wsize; i++) 
+					{
+						if (vec(1) > window[i])
+						{
+							for (int j = wsize * wsize - 1; j >= i + 1; j--)
+							{
+								window[j] = window[j - 1];
+							}
+							window[i] = vec(1);
+							break;
+						}
+					}
+					c = window[wsize * wsize / 2];
+				}
+			}
+
+			c = my_clamp(c, 0.0f, 255.0f);
+			out.at<cv::Vec3b>(y, x) = (cv::Vec3b)c;
+		}
+	}
+
+	return;
+}
+
+
+// バイラテラルフィルタ
+inline void my_bilateral(const cv::Mat image, cv::Mat out, const int size, const float sigma1, const float sigma2)
+{
+	int mx, my;
+	cv::Vec3f c;
+
+	for (int y = 0; y < image.rows; y++)
+	{
+		for (int x = 0; x < image.cols; x++)
+		{
+			c = cv::Vec3f(0.0f, 0.0f, 0.0f);
+
+			cv::Vec3f f = (cv::Vec3f)image.at<cv::Vec3b>(y, x) / 255.0f;
+
+			cv::Vec3f wn = Vec3f(0.0f, 0.0f, 0.0f); // 分子
+			cv::Vec3f wd = Vec3f(0.0f, 0.0f, 0.0f); // 分母
+
+			for (int dy = -size; dy <= size; dy++)
+			{
+				for (int dx = -size; dx <= size; dx++)
+				{
+					mx = my_mirror(x + dx, 0, image.cols);
+					my = my_mirror(y + dy, 0, image.rows);
+
+					cv::Vec3f fd = (cv::Vec3f)image.at<cv::Vec3b>(my, mx) / 255.0f;
+					cv::Vec3f w;
+
+					for (int i = 0; i < 3; i++)
+					{
+						w(i) = exp(- ((float)(dx * dx + dy * dy)) / (2.0f * sigma1 * sigma1))
+							* exp(- powf((float)(f(i) - fd(i)), 2.0f) / (2.0f * sigma2 * sigma2));
+
+						wn(i) += w(i) * fd(i);
+						wd(i) += w(i);
+					}
+				}
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				c(i) = wn(i) / wd(i);
+			}
+
+			c = my_clamp(c, 0.0f, 1.0f) * 255.0f;
+			out.at<cv::Vec3b>(y, x) = (cv::Vec3b)c;
+		}
+	}
+
+	return;
+}
+
+inline void my_bilateral(const cv::Mat image, cv::Mat out)
+{
+	my_bilateral(image, out, 1, 1.0f, 0.05f);
+
+	return;
+}
+
+inline void my_bilateral(const cv::Mat image, cv::Mat out, const int size, const float sigma1, const float sigma2, const int loop)
+{
+	my_bilateral(image, out, size, sigma1, sigma2);
+	for (int i = 0; i < loop - 1; i++)
+	{
+		my_bilateral(out, out, size, sigma1, sigma2);
+	}
+
+	return;
+}
+
