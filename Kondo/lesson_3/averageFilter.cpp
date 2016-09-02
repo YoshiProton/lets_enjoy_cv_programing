@@ -35,9 +35,9 @@ cv::Mat averageFilter(cv::Mat img, int size)
 	{
 		int margin = size / 2; // エッジ周辺のマージンを取る。
 		cv::Mat reg;
-		for (int x = margin; x < img.rows - margin; x++)
+		for (int y = margin; y < img.rows - margin; y++)
 		{
-			for (int y = margin; y < img.cols - margin; y++)
+			for (int x = margin; x < img.cols - margin; x++)
 			{
 				// (size x size)の領域の画像とkernelの要素同士の積を計算
 				reg = img(cv::Rect(x - margin, y - margin, size, size)).clone();
@@ -59,9 +59,9 @@ cv::Mat averageFilter(cv::Mat img, int size)
 
 		int margin = size / 2; // 処理しないエッジ周辺のマージン。
 		cv::Mat reg;
-		for (int x = margin; x < img.rows - margin; x++)
+		for (int y= margin; y < img.rows - margin; y++)
 		{
-			for (int y = margin; y < img.cols - margin; y++)
+			for (int x = margin; x < img.cols - margin; x++)
 			{
 				// channels毎に平均化処理
 				for (int i = 0; i < channels.size(); i++)
