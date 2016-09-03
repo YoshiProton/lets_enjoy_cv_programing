@@ -91,5 +91,30 @@ int main()
 	my_sharpening(input, image_sharpening);
 	cv::imwrite("image/task3/lena_sharpening.jpg", image_sharpening);
 
+	// メディアンフィルタテスト
+	cv::Mat image_median(rows, cols, CV_8UC3);
+	my_median(input, image_median, 1);
+	cv::imwrite("image/task3/lena_median1.jpg", image_median);
+	my_median(input, image_median, 5);
+	cv::imwrite("image/task3/lena_median5.jpg", image_median);
+
+	// バイラテラルフィルタテスト
+	cv::Mat image_bilateral(rows, cols, CV_8UC3);
+	my_bilateral(input, image_bilateral, 1, 1.0f, 0.05f);
+	cv::imwrite("image/task3/lena_bilateral01.jpg", image_bilateral);
+	my_bilateral(input, image_bilateral, 1, 1.0f, 0.05f, 5);
+	cv::imwrite("image/task3/lena_bilateral05.jpg", image_bilateral);
+	my_bilateral(input, image_bilateral, 1, 1.0f, 0.05f, 20);
+	cv::imwrite("image/task3/lena_bilateral20.jpg", image_bilateral);
+
+	// ノンローカルミーンフィルタテスト
+	cv::Mat image_nonlocalmean(rows, cols, CV_8UC3);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f);
+	cv::imwrite("image/task3/lena_nonlocalmean01.jpg", image_nonlocalmean);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f, 5);
+	cv::imwrite("image/task3/lena_nonlocalmean05.jpg", image_nonlocalmean);
+	my_nonlocalmean(input, image_nonlocalmean, 1, 1, 0.05f, 20);
+	cv::imwrite("image/task3/lena_nonlocalmean20.jpg", image_nonlocalmean);
+
 	return 0;
 }
