@@ -93,6 +93,18 @@
     <ClInclude Include="BilateralFilter.h">
       <Filter>ヘッダー ファイル\lesson03</Filter>
     </ClInclude>
+    <ClInclude Include="Sample.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FourierTransform.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="NonlocalMeansFilter.h">
+      <Filter>ヘッダー ファイル\lesson03</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimaryDifferentialFilter.h">
+      <Filter>ヘッダー ファイル\lesson03</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCProject.cpp">
@@ -144,6 +156,18 @@
       <Filter>ソース ファイル\lesson03</Filter>
     </ClCompile>
     <ClCompile Include="BilateralFilter.cpp">
+      <Filter>ソース ファイル\lesson03</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FourierTransform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="NonlocalMeansFilter.cpp">
+      <Filter>ソース ファイル\lesson03</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimaryDifferentialFilter.cpp">
       <Filter>ソース ファイル\lesson03</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,9 +14,9 @@ cv::Mat difFilterCore(cv::Mat img, cv::Mat kernel)
 	{
 		int margin = ksize / 2; // エッジ周辺のマージンを取る。
 		cv::Mat reg;
-		for (int x = margin; x < img.rows - margin; x++)
+		for (int y = margin; y < img.rows - margin; y++)
 		{
-			for (int y = margin; y < img.cols - margin; y++)
+			for (int x = margin; x < img.cols - margin; x++)
 			{
 				// (size x size)の領域の画像とkernelの要素同士の積を計算
 				reg = img(cv::Rect(x - margin, y - margin, ksize, ksize)).clone();

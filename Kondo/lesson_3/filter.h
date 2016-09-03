@@ -22,7 +22,8 @@ cv::Mat unsharpmask(cv::Mat img, int k);
 cv::Mat medianFilter(cv::Mat img, int ksize);
 int getMedianVal(cv::Mat reg, int center);
 
-cv::Mat bilateralFilter(cv::Mat img, int sigma_x, int sigma_color);
+cv::Mat bilateralFilter(cv::Mat img, int ksize, float sigma_xy, float sigma_color);
+float bilateralCore(cv::Mat reg, float sigma_xy, float sigma_color);
 cv::Mat nonlocalmean(cv::Mat img);
 
 //

@@ -8,8 +8,8 @@ int main(int argc, char** argv)
 	cv::cvtColor(img, grayimg, CV_BGR2GRAY);
 
 	// 平均化フィルタ
-	//cv::Mat ave = averageFilter(grayimg, 5);
-	////cv::Mat ave = averageFilter(img, 5);
+	////cv::Mat ave = averageFilter(grayimg, 5);
+	//cv::Mat ave = averageFilter(img, 5);
 	//cv::imshow("average", ave);
 
 	// 微分フィルタ
@@ -29,10 +29,15 @@ int main(int argc, char** argv)
 	//cv::Mat usm = unsharpmask(grayimg, 5);
 	//cv::imshow("unsharpmask", usm);
 
+	// メディアンフィルタ
+	//cv::Mat med = medianFilter(grayimg, 5);
+	//cv::imshow("median", med);
 
-	cv::Mat med = medianFilter(grayimg, 5);
-	cv::imshow("median", med);
-
+	// バイラテラルフィルタ (適当な、パラメータの値が不明。とりあえずうまくいっている？)
+	cv::Mat bilat = bilateralFilter(grayimg, 11, 3, 3);
+	bilat = bilateralFilter(bilat, 11, 3, 3);
+	cv::imshow("bilateral", bilat);
+	cv::imshow("original", grayimg);
 
 
 	cv::waitKey(0);

@@ -12,15 +12,17 @@
 
 #include "Utility.h"
 #include "ImageProcessor.h"
+#include "Sample.h"
 #include "ProcessDlg.h"
 #include "Original.h"
 #include "Grayscale.h"
 #include "Resize.h"
-#include "ColorSpaceDlg.h"
 #include "HueFilter.h"
 #include "KernelFilter.h"
 #include "BilateralFilter.h"
+#include "NonlocalMeansFilter.h"
 #include "MedianFilter.h"
+#include "FourierTransform.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -102,6 +104,8 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_COMMAND(ID_MENU_BILATERAL_FILTER, &CMainDlg::OnMenuBilateralFilter)
 	ON_COMMAND(ID_MENU_NONLOCALMEAN_FILTER, &CMainDlg::OnMenuNonLocalMeanFilter)
 	ON_COMMAND(ID_MENU_MEDIAL_FILTER, &CMainDlg::OnMenuMedialFilter)
+	ON_COMMAND(ID_MENU_FOURIER_TRANSFORM, &CMainDlg::OnMenuFourierTransform)
+	ON_COMMAND(ID_MENU_INVERSE_FOURIER_TRANSFORM, &CMainDlg::OnMenuInverseFourierTransform)
 END_MESSAGE_MAP()
 
 
@@ -504,24 +508,19 @@ void CMainDlg::OnMenuResize()
 ///</summary>
 void CMainDlg::OnMenuNew()
 {
-	//全部OpenCVでやる方式（RBG<-->HSV変換）
-	cv::Mat srcImg(256, 256, CV_8UC3, cv::Scalar(100, 100, 100));
-	cv::Mat dstImg(256, 256, CV_8UC3);
-	cv::cvtColor(srcImg, dstImg, cv::COLOR_HSV2BGR);
-	cv::namedWindow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", cv::WINDOW_AUTOSIZE);
-	cv::imshow("256*256の大きさで(色相、彩度、明度)=(100, 100, 100)の画像(OpenCV使用)", dstImg);
+	CSample sample;
 
-	//ダイアログでRGB(HSV)を指定した値を元にして表示する方式（作成中）
-	int r, g, b;
-	int width, height;
-	CColorSpaceDlg dlg;
-	dlg.SetValues(&width, &height, &r, &g, &b);
-	if (dlg.DoModal() == IDOK)
+	switch (1)
 	{
-		//スクラッチでRBG<-->HSV変換
-		cv::Mat img(cv::Size(width, height), CV_8UC3, cv::Scalar(b, g, r));
-		cv::namedWindow("スクラッチでRBG<-->HSV変換", cv::WINDOW_AUTOSIZE);
-		cv::imshow("スクラッチでRBG<-->HSV変換", img);
+	case 0://カラーフィルタ用HSV
+		sample.CreateColorSpaceImage(L"sample.hsv.jpg");
+		break;
+	case 1://ガウシアンノイズ付加
+		sample.CreateGaussianNoiseImage(L"lena.jpg", L"sample.noise.jpg");
+		break;
+	case 2://フーリエ変換用サイン波
+		sample.CreateFrequencyImage(L"sample.sin.bmp");
+		break;
 	}
 }
 
@@ -597,7 +596,7 @@ void CMainDlg::OnMenuAveragingFilter()
 			normalize += col;
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel5, normalize);
+	filter.SetKernel(CKernelFilter::FilterType::Averaging, kernel5, normalize);
 
 	switch (procMethod)
 	{
@@ -659,7 +658,7 @@ void CMainDlg::OnMenuGaussianFilter()
 			normalize += col;
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel5, normalize);
+	filter.SetKernel(CKernelFilter::FilterType::Gaussian, kernel5, normalize);
 
 	switch (procMethod)
 	{
@@ -695,7 +694,7 @@ void CMainDlg::OnMenuDifferencialFilter()
 	};
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel, 1);
+	filter.SetKernel(CKernelFilter::FilterType::Differencial, kernel, 1);
 
 	switch (procMethod)
 	{
@@ -731,7 +730,7 @@ void CMainDlg::OnMenuPrewittFilter()
 	};
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel, 3);
+	filter.SetKernel(CKernelFilter::FilterType::Prewitt, kernel, 3);
 
 	switch (procMethod)
 	{
@@ -767,7 +766,7 @@ void CMainDlg::OnMenuSobelFilter()
 	};
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel, 4);
+	filter.SetKernel(CKernelFilter::FilterType::Sobel, kernel, 4);
 
 	switch (procMethod)
 	{
@@ -802,7 +801,7 @@ void CMainDlg::OnMenuLaplacianFilter()
 	};
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel, 1);
+	filter.SetKernel(CKernelFilter::FilterType::Laplacian, kernel, 1);
 
 	switch (procMethod)
 	{
@@ -837,7 +836,7 @@ void CMainDlg::OnMenuSharpeningFilter()
 	};
 
 	CKernelFilter filter;
-	filter.SetKernel(kernel, 1);
+	filter.SetKernel(CKernelFilter::FilterType::Sharpening, kernel, 1);
 
 	switch (procMethod)
 	{
@@ -865,7 +864,7 @@ void CMainDlg::OnMenuBilateralFilter()
 		return;
 
 	CBilateralFilter filter;
-	filter.SetKernel(5);
+	filter.SetKernel(3);
 
 	switch (procMethod)
 	{
@@ -886,7 +885,27 @@ void CMainDlg::OnMenuBilateralFilter()
 ///</summary>
 void CMainDlg::OnMenuNonLocalMeanFilter()
 {
-	// TODO: ここにコマンド ハンドラー コードを追加します。
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	CNonlocalMeansFilter filter;
+	filter.SetKernel(3, 7);
+
+	switch (procMethod)
+	{
+	case 0:
+		filter.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		filter.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		filter.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
 }
 
 ///<summary>
@@ -915,6 +934,37 @@ void CMainDlg::OnMenuMedialFilter()
 		filter.ProcessByFullScratch(pixelData, &bmpInfo);
 		break;
 	}
+}
+
+
+void CMainDlg::OnMenuFourierTransform()
+{
+	int procMethod = 0;
+	CProcessDlg dlg;
+	dlg.SetValues(&procMethod);
+	if (dlg.DoModal() != IDOK)
+		return;
+
+	CFourierTransform process;
+
+	switch (procMethod)
+	{
+	case 0:
+		process.ProcessByFullOpenCV(filePath);
+		break;
+	case 1:
+		process.ProcessByPartOpenCV(filePath);
+		break;
+	case 2:
+		process.ProcessByFullScratch(pixelData, &bmpInfo);
+		break;
+	}
+}
+
+
+void CMainDlg::OnMenuInverseFourierTransform()
+{
+	// TODO: ここにコマンド ハンドラー コードを追加します。
 }
 
 #pragma endregion

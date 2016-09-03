@@ -68,4 +68,6 @@ public:
 	afx_msg void OnMenuBilateralFilter();
 	afx_msg void OnMenuNonLocalMeanFilter();
 	afx_msg void OnMenuMedialFilter();
+	afx_msg void OnMenuFourierTransform();
+	afx_msg void OnMenuInverseFourierTransform();
 };
