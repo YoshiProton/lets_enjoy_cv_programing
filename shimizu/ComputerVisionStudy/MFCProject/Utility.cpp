@@ -111,3 +111,51 @@ void CUtility::ConvertHSVtoRGB(int h, int s, int v, int* r, int* g, int* b)
 		*b = (int)(((360 - hh) / 60) * (max - min) + min);
 	}
 }
+
+
+double CUtility::GetPSNR(cv::Mat& src, cv::Mat& dest)
+{ 
+	int i, j;     
+	double sse, mse, psnr; 
+	sse = 0.0;   
+	for (j = 0; j<src.rows; j++)  
+	{ 
+		uchar* d = dest.ptr(j);  
+		uchar* s = src.ptr(j); 
+		for (i = 0; i<src.cols; i++) 
+		{ 
+			sse += ((d[i] - s[i])*(d[i] - s[i]));
+		} 
+	}
+	
+	if (sse == 0.0) 
+	{ 
+		return 0; 
+	} 
+	else 
+	{ 
+		mse = sse / (double)(src.cols*src.rows); 
+		psnr = 10.0*log10((255 * 255) / mse);
+		return psnr;
+	}
+}
+
+double CUtility::CalcPSNR(cv::Mat& src, cv::Mat& dest)
+{ 
+	cv::Mat ssrc;
+	cv::Mat ddest;
+	if (src.channels() == 1)
+	{ 
+		src.copyTo(ssrc);    
+		dest.copyTo(ddest);
+	} 
+	else
+	{
+		cvtColor(src, ssrc, CV_BGR2YUV); 
+		cvtColor(dest, ddest, CV_BGR2YUV);
+	}  
+
+	double sn = GetPSNR(ssrc, ddest); 
+
+	return sn;
+}

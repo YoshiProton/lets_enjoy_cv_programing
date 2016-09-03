@@ -26,6 +26,18 @@ void CBilateralFilter::SetKernel(int kernelSize)
 ///</summary>
 void CBilateralFilter::ProcessByFullOpenCV(CString filePath)
 {
+	//元画像読み込み
+	std::string path = this->GetMultiBytePath(filePath);
+	cv::Mat src = cv::imread(path, 1);
+	cv::Mat dest;
+
+	int color_sigma = 35;
+	int space_sigma = 5;
+	cv::bilateralFilter(src, dest, this->kernelSize, color_sigma, space_sigma);
+
+	//表示
+	cv::namedWindow("バイラテラルフィルタ画像", cv::WINDOW_AUTOSIZE);
+	cv::imshow("バイラテラルフィルタ画像", dest);
 }
 
 ///<summary>
@@ -33,6 +45,7 @@ void CBilateralFilter::ProcessByFullOpenCV(CString filePath)
 ///</summary>
 void CBilateralFilter::ProcessByPartOpenCV(CString filePath)
 {
+	AfxMessageBox(L"未実装");
 }
 
 ///<summary>
