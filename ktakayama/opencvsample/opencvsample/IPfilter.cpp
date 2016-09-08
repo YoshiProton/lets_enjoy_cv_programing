@@ -26,10 +26,10 @@ void IPfilter::filter(const cv::Mat image, cv::Mat out, cv::Mat filter)
 
 			for (int dy = -size; dy <= size; dy++)
 			{
+				my = IPcommon::mirror(y + dy, 0, image.rows);
 				for (int dx = -size; dx <= size; dx++)
 				{
 					mx = IPcommon::mirror(x + dx, 0, image.cols);
-					my = IPcommon::mirror(y + dy, 0, image.rows);
 
 					cv::Vec3b vec = image.at<cv::Vec3b>(my, mx);
 					c += (cv::Vec3f)vec * filter.at<float>(dy + size, dx + size);
@@ -75,7 +75,7 @@ void IPfilter::gaussian(const cv::Mat image, cv::Mat out, const float sigma, con
 		{
 			filter.at<float>(y, x) =
 				exp(-((x - size) * (x - size) + (y - size) * (y - size)) / (2.0f * sigma * sigma))
-				/ (2.0f * myPI * sigma * sigma);
+				/ (2.0f * (float)M_PI * sigma * sigma);
 		}
 	}
 
@@ -225,10 +225,10 @@ void IPfilter::median(const cv::Mat image, cv::Mat out, int size)
 
 			for (int dy = -size; dy <= size; dy++)
 			{
+				int my = IPcommon::mirror(y + dy, 0, image.rows);
 				for (int dx = -size; dx <= size; dx++)
 				{
 					int mx = IPcommon::mirror(x + dx, 0, image.cols);
-					int my = IPcommon::mirror(y + dy, 0, image.rows);
 
 					cv::Vec3b vec = image.at<cv::Vec3b>(my, mx);
 
@@ -286,10 +286,10 @@ void IPfilter::bilateral(const cv::Mat image, cv::Mat out, const int size, const
 
 			for (int dy = -size; dy <= size; dy++)
 			{
+				my = IPcommon::mirror(y + dy, 0, image.rows);
 				for (int dx = -size; dx <= size; dx++)
 				{
 					mx = IPcommon::mirror(x + dx, 0, image.cols);
-					my = IPcommon::mirror(y + dy, 0, image.rows);
 
 					cv::Vec3f fd = (cv::Vec3f)image.at<cv::Vec3b>(my, mx) / 255.0f;
 					cv::Vec3f w;
@@ -352,10 +352,10 @@ void IPfilter::nonlocalmean(const cv::Mat image, cv::Mat out, const int size1, c
 
 			for (int dy = -size1; dy <= size1; dy++)
 			{
+				int my = IPcommon::mirror(y + dy, 0, image.rows);
 				for (int dx = -size1; dx <= size1; dx++)
 				{
 					int mx = IPcommon::mirror(x + dx, 0, image.cols);
-					int my = IPcommon::mirror(y + dy, 0, image.rows);
 
 					cv::Vec3f fd = (cv::Vec3f)image.at<cv::Vec3b>(my, mx) / 255.0f;
 					cv::Vec3f w;
@@ -363,10 +363,10 @@ void IPfilter::nonlocalmean(const cv::Mat image, cv::Mat out, const int size1, c
 					cv::Vec3f w_local = cv::Vec3f(0.0f, 0.0f, 0.0f);
 					for (int dy2 = -size2; dy2 <= size2; dy2++)
 					{
+						int my2 = IPcommon::mirror(y + dy + dy2, 0, image.rows);
 						for (int dx2 = -size2; dx2 <= size2; dx2++)
 						{
 							int mx2 = IPcommon::mirror(x + dx + dx2, 0, image.cols);
-							int my2 = IPcommon::mirror(y + dy + dy2, 0, image.rows);
 
 							cv::Vec3f fd2 = (cv::Vec3f)image.at<cv::Vec3b>(my2, mx2) / 255.0f;
 

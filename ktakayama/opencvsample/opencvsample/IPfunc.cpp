@@ -23,24 +23,8 @@ void IPfunc::grayscale(const cv::Mat image, cv::Mat out)
 			int G = vec(1);
 			int R = vec(2);
 
-			int M = (int)(R * 0.299f + G * 0.587f + B * 0.144f + 0.5f);
+			int M = (int)IPcommon::clamp(R * 0.299f + G * 0.587f + B * 0.144f, 0.0f, 255.0f);
 			vec = cv::Vec3b(M, M, M);
-
-			out.at<cv::Vec3b>(y, x) = vec;
-		}
-	}
-
-	return;
-}
-
-// サイズ変更(Nearest Neighbor)
-void IPfunc::resizeNN(const cv::Mat image, cv::Mat out, const double scale)
-{
-	for (int y = 0; y < image.rows * scale; y++)
-	{
-		for (int x = 0; x < image.cols * scale; x++)
-		{
-			cv::Vec3b vec = image.at<cv::Vec3b>((int)((double)y / scale), (int)((double)x / scale));
 
 			out.at<cv::Vec3b>(y, x) = vec;
 		}

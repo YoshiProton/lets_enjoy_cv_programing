@@ -7,7 +7,7 @@ int main()
 	const cv::Mat input = cv::imread(str_input + "lena.jpg");
 
 	test_task1(input);
-	test_task2(input);
+	// test_task2(input);
 	// test_task3(input);
 
 	return 0;
@@ -24,27 +24,72 @@ void test_task1(const cv::Mat input)
 	// 課題1-1 画像表示
 	cv::imshow("", input); 
 	cv::waitKey(1000);
-	cv::imwrite(str_task1 + "lena.jpg", input);
+	cv::imwrite(str_task1 + "lena.png", input);
 
 	// 課題1-2 グレースケール化(OpenCV)
 	cv::Mat output_gray_cv(rows, cols, CV_8UC3);
 	cv::cvtColor(input, output_gray_cv, CV_BGR2GRAY);
-	cv::imwrite(str_task1 + "lena_gray_cv.jpg", output_gray_cv);
+	cv::imwrite(str_task1 + "lena_gray_opencv.png", output_gray_cv);
 
 	// 課題1-3 グレースケール化(自作)
 	cv::Mat output_gray_own(rows, cols, CV_8UC3);
 	IPfunc::grayscale(input, output_gray_own);
-	cv::imwrite(str_task1 + "lena_gray_own.jpg", output_gray_own);
+	cv::imwrite(str_task1 + "lena_gray_own.png", output_gray_own);
 	
-	// 課題1-4 リサイズ(OpenCV)
-	cv::Mat output_scale_cv(rows * 2, cols * 2, CV_8UC3);
-	cv::resize(input, output_scale_cv, cv::Size(0, 0), 2.0, 2.0, cv::INTER_NEAREST);
-	cv::imwrite(str_task1 + "lena_scale_cv.jpg", output_scale_cv);
+	// 課題1-4 リサイズNN(OpenCV)
+	double scale = 0.5;
+	int scaleX = (int)floor(rows * scale);
+	int scaleY = (int)floor(cols * scale);
 
-	// 課題1-5 リサイズ(自作)
-	cv::Mat output_scale_own(rows * 2, cols * 2, CV_8UC3);
-	IPfunc::resizeNN(input, output_scale_own, 2.0);
-	cv::imwrite(str_task1 + "lena_scale_own.jpg", output_scale_own);
+	cv::Mat output_scale_cv(scaleX, scaleY, CV_8UC3);
+	cv::resize(input, output_scale_cv, cv::Size(0, 0), scale, scale, cv::INTER_NEAREST);
+	cv::imwrite(str_task1 + "lena_scale_nearest_opencv.png", output_scale_cv);
+
+	// 課題1-5 リサイズNN(自作)
+	cv::Mat output_scale_own(scaleX, scaleY, CV_8UC3);
+	IPinterpolation::resizeNN(input, output_scale_own, scale);
+	cv::imwrite(str_task1 + "lena_scale_nearest_own.png", output_scale_own);
+
+	// 差分NN
+	cv::Mat output_scale_diff(scaleX, scaleY, CV_8UC3);
+	cv::absdiff(output_scale_cv, output_scale_own, output_scale_diff);
+	cv::imwrite(str_task1 + "lena_scale_nearest_diff.png", output_scale_diff);
+
+	// リサイズBL(OpenCV)
+	cv::resize(input, output_scale_cv, cv::Size(0, 0), scale, scale, cv::INTER_LINEAR);
+	cv::imwrite(str_task1 + "lena_scale_bilinear_opencv.png", output_scale_cv);
+
+	// リサイズBL(自作)
+	IPinterpolation::resizeBL(input, output_scale_own, scale);
+	cv::imwrite(str_task1 + "lena_scale_bilinear_own.png", output_scale_own);
+
+	// 差分BL
+	cv::absdiff(output_scale_cv, output_scale_own, output_scale_diff);
+	cv::imwrite(str_task1 + "lena_scale_bilinear_diff.png", output_scale_diff);
+
+	// リサイズBC(OpenCV)
+	cv::resize(input, output_scale_cv, cv::Size(0, 0), scale, scale, cv::INTER_CUBIC);
+	cv::imwrite(str_task1 + "lena_scale_bicubic_opencv.png", output_scale_cv);
+
+	// リサイズBC(自作)
+	IPinterpolation::resizeBC(input, output_scale_own, scale);
+	cv::imwrite(str_task1 + "lena_scale_bicubic_own.png", output_scale_own);
+
+	// 差分BC
+	cv::absdiff(output_scale_cv, output_scale_own, output_scale_diff);
+	cv::imwrite(str_task1 + "lena_scale_bicubic_diff.png", output_scale_diff);
+
+	// リサイズBC(OpenCV)
+	cv::resize(input, output_scale_cv, cv::Size(0, 0), scale, scale, cv::INTER_LANCZOS4);
+	cv::imwrite(str_task1 + "lena_scale_lanczos4_opencv.png", output_scale_cv);
+
+	// リサイズBC(自作)
+	IPinterpolation::resizeLZ(input, output_scale_own, scale);
+	cv::imwrite(str_task1 + "lena_scale_lanczos4_own.png", output_scale_own);
+
+	// 差分BC
+	cv::absdiff(output_scale_cv, output_scale_own, output_scale_diff);
+	cv::imwrite(str_task1 + "lena_scale_lanczos4_diff.png", output_scale_diff);
 
 	return;
 }
@@ -70,12 +115,12 @@ void test_task2(const cv::Mat input)
 	// 課題2-3 HSV値セット
 	cv::Mat image_hsv(rows, cols, CV_8UC3);
 	IPfunc::valueSetHSV(image_hsv, 100, 100, 100);
-	cv::imwrite(str_task2 + "hsv100.jpg", image_hsv);
+	cv::imwrite(str_task2 + "hsv100.png", image_hsv);
 
 	// 課題2-4 肌色領域取得
 	cv::Mat skin_own(rows, cols, CV_8UC3);
 	IPfunc::skinDetect(input, skin_own);
-	cv::imwrite(str_task2 + "lena_skinDetect_own.jpg", skin_own);
+	cv::imwrite(str_task2 + "lena_skinDetect_own.png", skin_own);
 
 	return;
 }
@@ -91,63 +136,63 @@ void test_task3(const cv::Mat input)
 
 	// 平均化フィルタテスト
 	IPfilter::average(input, output, 3);
-	cv::imwrite(str_task3 + "5-2/lena_average.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_average.png", output);
 
 	// ガウシアンフィルタテスト
 	IPfilter::gaussian(input, output, 0.8f, 3);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian1.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian1.png", output);
 	IPfilter::gaussian(input, output, 1.0f, 3);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian2.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian2.png", output);
 	IPfilter::gaussian(input, output, 1.3f, 3);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian3.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian3.png", output);
 
 	// ガウシアンフィルタテスト(Pascal)
 	IPfilter::gaussian_pascal(input, output, 1);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal1.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal1.png", output);
 	IPfilter::gaussian_pascal(input, output, 2);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal2.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal2.png", output);
 	IPfilter::gaussian_pascal(input, output, 3);
-	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal3.jpg", output);
+	cv::imwrite(str_task3 + "5-2/lena_gaussian_pascal3.png", output);
 
 	// プリューウィットフィルタテスト
 	IPfilter::prewitt_x(input, output);
 	// IPfilter::prewitt_y(input, output);
-	cv::imwrite(str_task3 + "5-3/lena_prewitt.jpg", output);
+	cv::imwrite(str_task3 + "5-3/lena_prewitt.png", output);
 
 	// ソーベルフィルタテスト
 	IPfilter::sobel_x(input, output);
 	// IPfilter::sobel_y(input, output);
-	cv::imwrite(str_task3 + "5-3/lena_sobel.jpg", output);
+	cv::imwrite(str_task3 + "5-3/lena_sobel.png", output);
 
 	// ラプラシアンフィルタテスト
 	IPfilter::laplacian(input, output);
-	cv::imwrite(str_task3 + "5-3/lena_laplacian.jpg", output);
+	cv::imwrite(str_task3 + "5-3/lena_laplacian.png", output);
 
 	// 鮮鋭化フィルタテスト
 	IPfilter::sharpening(input, output);
-	cv::imwrite(str_task3 + "5-4/lena_sharpening.jpg", output);
+	cv::imwrite(str_task3 + "5-4/lena_sharpening.png", output);
 
 	// メディアンフィルタテスト
 	IPfilter::median(input, output, 1);
-	cv::imwrite(str_task3 + "5-5/lena_median1.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_median1.png", output);
 	IPfilter::median(input, output, 5);
-	cv::imwrite(str_task3 + "5-5/lena_median5.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_median5.png", output);
 
 	// バイラテラルフィルタテスト
 	IPfilter::bilateral(input, output, 1, 1.0f, 0.05f);
-	cv::imwrite(str_task3 + "5-5/lena_bilateral01.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_bilateral01.png", output);
 	IPfilter::bilateral(input, output, 1, 1.0f, 0.05f, 5);
-	cv::imwrite(str_task3 + "5-5/lena_bilateral05.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_bilateral05.png", output);
 	IPfilter::bilateral(input, output, 1, 1.0f, 0.05f, 20);
-	cv::imwrite(str_task3 + "5-5/lena_bilateral20.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_bilateral20.png", output);
 
 	// ノンローカルミーンフィルタテスト
 	IPfilter::nonlocalmean(input, output, 1, 1, 0.05f);
-	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean01.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean01.png", output);
 	IPfilter::nonlocalmean(input, output, 1, 1, 0.05f, 5);
-	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean05.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean05.png", output);
 	IPfilter::nonlocalmean(input, output, 1, 1, 0.05f, 20);
-	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean20.jpg", output);
+	cv::imwrite(str_task3 + "5-5/lena_nonlocalmean20.png", output);
 
 	return;
 }

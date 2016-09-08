@@ -19,8 +19,24 @@ float IPcommon::clamp(float x, float min, float max) {
 	return x;
 }
 
+double IPcommon::clamp(double x, double min, double max) {
+	if (x < min) x = min;
+	if (x > max) x = max;
+
+	return x;
+}
+
 // clampèàóù(cv::Vec3f)
 cv::Vec3f IPcommon::clamp(cv::Vec3f x, float min, float max) {
+	for (int i = 0; i < 3; i++)
+	{
+		clamp(x(i), min, max);
+	}
+
+	return x;
+}
+
+cv::Vec3d IPcommon::clamp(cv::Vec3d x, double min, double max) {
 	for (int i = 0; i < 3; i++)
 	{
 		clamp(x(i), min, max);
