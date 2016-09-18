@@ -13,7 +13,7 @@ namespace toyocv{
   void cvtColor(cv::InputArray src, cv::OutputArray dst);
   void resize(cv::InputArray src, cv::OutputArray dst, ResizeMethod method = NearestNeighbors);
   void blur(cv::InputArray src, cv::OutputArray dst,
-	    cv::Size ksize, cv::Point anchor = cv::Point(-1,-1),
-	    int borderType = cv::BORDER_DEFAULT);
+	    const cv::Size &ksize, const cv::Point &anchor = cv::Point(-1,-1),
+	    const int &borderType = cv::BORDER_DEFAULT);
 }
 #endif
