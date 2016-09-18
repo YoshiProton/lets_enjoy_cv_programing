@@ -15,8 +15,9 @@ CKernelFilter::~CKernelFilter()
 ///<summary>
 ///	カーネルのセット
 ///</summary>
-void CKernelFilter::SetKernel(std::vector<std::vector<int>> kernel, int normalize)
+void CKernelFilter::SetKernel(FilterType filterType, std::vector<std::vector<int>> kernel, int normalize)
 {
+	this->filterType = filterType;
 	this->kernel = kernel;
 	this->normalize = normalize;
 }
@@ -30,7 +31,7 @@ void CKernelFilter::ProcessByFullOpenCV(CString filePath)
 	//元画像読み込み
 	cv::Mat srcImage = cv::imread(this->GetMultiBytePath(filePath));
 	cv::Mat dstImage;
-	cvtColor(srcImage, dstImage, CV_BGR2BGRA);
+	cv::cvtColor(srcImage, dstImage, CV_BGR2BGRA);
 
 	cv::namedWindow("フィルタ画像", cv::WINDOW_AUTOSIZE);
 	cv::imshow("フィルタ画像", dstImage);

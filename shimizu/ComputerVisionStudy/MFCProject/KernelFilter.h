@@ -8,15 +8,16 @@ public:
 	CKernelFilter();
 	~CKernelFilter();
 
-	//enum FilterType { Averaging = 0, Gaussian, Differencial, Prewitt, Sobel, Laplacian, Sharpening };
+	enum FilterType { Averaging = 0, Gaussian, Differencial, Prewitt, Sobel, Laplacian, Sharpening };
 
-	void SetKernel(std::vector<std::vector<int>>, int);
+	void SetKernel(FilterType, std::vector<std::vector<int>>, int);
 
 	void ProcessByFullOpenCV(CString);
 	void ProcessByPartOpenCV(CString);
 	void ProcessByFullScratch(LPCOLORREF, BITMAPINFO*);
 
 private:
+	FilterType filterType;
 	std::vector<std::vector<int>> kernel;
 	int normalize;
 };

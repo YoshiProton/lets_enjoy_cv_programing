@@ -26,6 +26,16 @@ void CMedianFilter::SetKernel(int size)
 ///</summary>
 void CMedianFilter::ProcessByFullOpenCV(CString filePath)
 {
+	//元画像読み込み
+	std::string path = this->GetMultiBytePath(filePath);
+	cv::Mat src = cv::imread(path, 1);
+	cv::Mat dest;
+
+	cv::medianBlur(src, dest, this->kernelSize);
+
+	//表示
+	cv::namedWindow("メディアンフィルタ画像", cv::WINDOW_AUTOSIZE);
+	cv::imshow("メディアンフィルタ画像", dest);
 }
 
 ///<summary>
@@ -33,6 +43,7 @@ void CMedianFilter::ProcessByFullOpenCV(CString filePath)
 ///</summary>
 void CMedianFilter::ProcessByPartOpenCV(CString filePath)
 {
+	AfxMessageBox(L"未実装");
 }
 
 ///<summary>

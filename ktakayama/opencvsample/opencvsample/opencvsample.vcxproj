@@ -149,6 +149,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IPcommon.cpp" />
+    <ClCompile Include="IPfilter.cpp" />
+    <ClCompile Include="IPfunc.cpp" />
+    <ClCompile Include="IPinterpolation.cpp" />
     <ClCompile Include="opencvsample.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
@@ -156,8 +160,9 @@
     <ClInclude Include="IPcommon.h" />
     <ClInclude Include="IPfilter.h" />
     <ClInclude Include="IPfunc.h" />
+    <ClInclude Include="IPinterpolation.h" />
+    <ClInclude Include="opencvsample.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
