@@ -26,6 +26,7 @@
 		B69302041D30F4B300CD9B96 /* libopencv_video.3.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B69301F41D30F4B300CD9B96 /* libopencv_video.3.1.0.dylib */; };
 		B69302051D30F4B300CD9B96 /* libopencv_videoio.3.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B69301F51D30F4B300CD9B96 /* libopencv_videoio.3.1.0.dylib */; };
 		B69302061D30F4B300CD9B96 /* libopencv_videostab.3.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B69301F61D30F4B300CD9B96 /* libopencv_videostab.3.1.0.dylib */; };
+		B6C82B181D69A1990052FF70 /* lesson3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C82B161D69A1990052FF70 /* lesson3.cpp */; };
 		B6D0AD981D523A2E00D9731B /* SameImageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D0AD961D523A2E00D9731B /* SameImageFile.cpp */; };
 		B6F48F7E1D4E108A00588DEF /* lesson2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F48F7C1D4E108A00588DEF /* lesson2.cpp */; };
 /* End PBXBuildFile section */
@@ -65,6 +66,8 @@
 		B69301F41D30F4B300CD9B96 /* libopencv_video.3.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_video.3.1.0.dylib; path = /usr/local/Cellar/opencv3/3.1.0_1/lib/libopencv_video.3.1.0.dylib; sourceTree = "<absolute>"; };
 		B69301F51D30F4B300CD9B96 /* libopencv_videoio.3.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_videoio.3.1.0.dylib; path = /usr/local/Cellar/opencv3/3.1.0_1/lib/libopencv_videoio.3.1.0.dylib; sourceTree = "<absolute>"; };
 		B69301F61D30F4B300CD9B96 /* libopencv_videostab.3.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_videostab.3.1.0.dylib; path = /usr/local/Cellar/opencv3/3.1.0_1/lib/libopencv_videostab.3.1.0.dylib; sourceTree = "<absolute>"; };
+		B6C82B161D69A1990052FF70 /* lesson3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lesson3.cpp; sourceTree = "<group>"; };
+		B6C82B171D69A1990052FF70 /* lesson3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lesson3.hpp; sourceTree = "<group>"; };
 		B6D0AD961D523A2E00D9731B /* SameImageFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SameImageFile.cpp; sourceTree = "<group>"; };
 		B6D0AD971D523A2E00D9731B /* SameImageFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SameImageFile.hpp; sourceTree = "<group>"; };
 		B6D0AD991D523AFA00D9731B /* basic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = basic.h; sourceTree = "<group>"; };
@@ -128,13 +131,14 @@
 		B684035D1D1FEF67008D1BA6 /* cv_beginers */ = {
 			isa = PBXGroup;
 			children = (
-				B6D0AD921D5239C800D9731B /* same_image_file */,
-				B6F48F7A1D4E106700588DEF /* lesson2 */,
+				B6D0AD991D523AFA00D9731B /* basic.h */,
 				B665514A1D300A6600DB9856 /* lesson1 */,
+				B6F48F7A1D4E106700588DEF /* lesson2 */,
+				B6C82B151D69A15C0052FF70 /* lesson3 */,
 				B684035E1D1FEF67008D1BA6 /* main.cpp */,
+				B6D0AD921D5239C800D9731B /* same_image_file */,
 				B66551531D308F0A00DB9856 /* Util.cpp */,
 				B66551541D308F0A00DB9856 /* Util.hpp */,
-				B6D0AD991D523AFA00D9731B /* basic.h */,
 			);
 			path = cv_beginers;
 			sourceTree = "<group>";
@@ -160,6 +164,15 @@
 				B69301F61D30F4B300CD9B96 /* libopencv_videostab.3.1.0.dylib */,
 			);
 			name = lib;
+			sourceTree = "<group>";
+		};
+		B6C82B151D69A15C0052FF70 /* lesson3 */ = {
+			isa = PBXGroup;
+			children = (
+				B6C82B161D69A1990052FF70 /* lesson3.cpp */,
+				B6C82B171D69A1990052FF70 /* lesson3.hpp */,
+			);
+			name = lesson3;
 			sourceTree = "<group>";
 		};
 		B6D0AD921D5239C800D9731B /* same_image_file */ = {
@@ -238,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B66551551D308F0A00DB9856 /* Util.cpp in Sources */,
+				B6C82B181D69A1990052FF70 /* lesson3.cpp in Sources */,
 				B684035F1D1FEF67008D1BA6 /* main.cpp in Sources */,
 				B6F48F7E1D4E108A00588DEF /* lesson2.cpp in Sources */,
 				B665514D1D300A7700DB9856 /* lesson1.cpp in Sources */,
