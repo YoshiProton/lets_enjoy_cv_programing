@@ -6,7 +6,7 @@
 namespace toyocv{
   class FilterBase{
   public:
-    void apply(cv::InputArray _src, cv::OutputArray _dst);
+    void apply(cv::InputArray _src, cv::OutputArray _dst, const int & ddepth=-1);
     void setKernel(cv::Mat &kerel_);
     
   private:

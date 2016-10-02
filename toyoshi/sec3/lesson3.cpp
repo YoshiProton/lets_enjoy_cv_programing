@@ -39,6 +39,29 @@ int main( int argc, char** argv )
   imshow("diff", blurImage - blurImageOrig);
   
   waitKey(0);
+  destroyAllWindows();
+
+  Mat grayImage;
+  cvtColor(image, grayImage, CV_RGB2GRAY);
+
+  Size kernelSize2(3, 3);
+  
+  Mat differentialx;
+  Mat differentialy;
+  Mat differentialxy;
+  // toyocv::differential(grayImage, differentialx, CV_16UC3, 1, 0, kernelSize2);
+  // toyocv::differential(grayImage, differentialy, CV_16UC3, 0, 1, kernelSize2);
+  // toyocv::differential(grayImage, differentialxy, CV_16UC3, 1, 1, kernelSize2);  
+
+  toyocv::differential(grayImage, differentialx, CV_8UC1, 1, 0, kernelSize);
+  toyocv::differential(grayImage, differentialy, CV_8UC1, 0, 1, kernelSize);
+  toyocv::differential(grayImage, differentialxy, CV_8UC1, 1, 1, kernelSize);  
+  
+  imshow("diffx", differentialx);
+  imshow("diffy", differentialy);
+  imshow("diffxy", differentialxy);
+
+  waitKey(0);
   
   return 0;
 }

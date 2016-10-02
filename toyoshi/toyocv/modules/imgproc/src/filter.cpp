@@ -11,6 +11,12 @@ namespace toyocv{
     double output = 0;
 
     Mat subMat = src(Rect(w - margineWidth, h - margineHeight, kernel.cols, kernel.rows));
+
+    // if(kernel.type() != subMat.type())
+
+    // std::cout << kernel.type() << std::endl;
+    // std::cout << subMat.type() << std::endl;
+    
     Mat mulKernel = subMat.mul(kernel);
 
     output += (double)sum(mulKernel)[0];
@@ -78,11 +84,14 @@ namespace toyocv{
     return false;
   }
   
-  void FilterBase::apply(cv::InputArray _src, cv::OutputArray _dst){
+  void FilterBase::apply(cv::InputArray _src, cv::OutputArray _dst, const int &ddepth){
     int stype = _src.type();
     int dcn = _src.channels();
     int depth = CV_MAT_DEPTH(stype);
-    
+
+    if (0 <= ddepth)
+      depth = ddepth;
+      
     Mat src, dst;
     src = _src.getMat();
 
