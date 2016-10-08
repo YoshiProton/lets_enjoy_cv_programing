@@ -1,6 +1,6 @@
 #include "filter.h"
 
-cv::Mat difFilterCore(cv::Mat img, cv::Mat kernel)
+cv::Mat difFilterCore(const cv::Mat img, const cv::Mat kernel)
 {
 	cv::Mat dstimg = cv::Mat::zeros(img.size(), CV_8UC1); // 何かで初期化しておかないと、下のatを使った代入でエラーがでる。
 	int ksize = kernel.cols;
@@ -12,18 +12,14 @@ cv::Mat difFilterCore(cv::Mat img, cv::Mat kernel)
 
 	if (img.channels() == 1)
 	{
-		int margin = ksize / 2; // エッジ周辺のマージンを取る。
-		cv::Mat reg;
-		for (int y = margin; y < img.rows - margin; y++)
+		// エッジ処理込み
+		for (int y = 0; y < img.rows; y++)
 		{
-			for (int x = margin; x < img.cols - margin; x++)
+			for (int x = 0; x < img.cols; x++)
 			{
-				// (size x size)の領域の画像とkernelの要素同士の積を計算
-				reg = img(cv::Rect(x - margin, y - margin, ksize, ksize)).clone();
-				float mulsum = multSumMat(kernel, reg);
 				// 積和した値を結果に。(int)で値の切り捨て
-				// 差分を計算すると、負数もでるので、絶対値をとる。
-				dstimg.at<uchar>(y, x) = (int)abs(mulsum);
+				int conv = convolute(x, y, img, kernel);
+				dstimg.at<uchar>(y, x) = abs(conv);
 			}
 		}
 	}
@@ -31,7 +27,7 @@ cv::Mat difFilterCore(cv::Mat img, cv::Mat kernel)
 }
 
 
-cv::Mat diffFileter(cv::Mat img, int direction)
+cv::Mat diffFileter(const cv::Mat img, const int direction)
 {
 	int size = 3;
 	// 微分フィルタのカーネル作成
@@ -54,7 +50,7 @@ cv::Mat diffFileter(cv::Mat img, int direction)
 
 
 
-cv::Mat prewitt(cv::Mat img, int direction)
+cv::Mat prewitt(const cv::Mat img, const int direction)
 {
 	int size = 3;
 	// 平均化フィルタのカーネル作成
@@ -78,7 +74,7 @@ cv::Mat prewitt(cv::Mat img, int direction)
 }
 
 
-cv::Mat sobel(cv::Mat img, int direction)
+cv::Mat sobel(const cv::Mat img, const int direction)
 {
 	int size = 3;
 	// 平均化フィルタのカーネル作成
@@ -103,7 +99,7 @@ cv::Mat sobel(cv::Mat img, int direction)
 
 
 
-cv::Mat laplacianFilter(cv::Mat img)
+cv::Mat laplacianFilter(const cv::Mat img)
 {
 	int size = 3;
 	// 平均化フィルタのカーネル作成
