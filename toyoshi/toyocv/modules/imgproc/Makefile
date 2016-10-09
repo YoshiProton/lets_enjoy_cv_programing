@@ -385,6 +385,60 @@ src/imgproc.cpp.s:
 	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/imgproc.cpp.s
 .PHONY : src/imgproc.cpp.s
 
+src/laplacian.o: src/laplacian.cpp.o
+
+.PHONY : src/laplacian.o
+
+# target to build an object file
+src/laplacian.cpp.o:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacian.cpp.o
+.PHONY : src/laplacian.cpp.o
+
+src/laplacian.i: src/laplacian.cpp.i
+
+.PHONY : src/laplacian.i
+
+# target to preprocess a source file
+src/laplacian.cpp.i:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacian.cpp.i
+.PHONY : src/laplacian.cpp.i
+
+src/laplacian.s: src/laplacian.cpp.s
+
+.PHONY : src/laplacian.s
+
+# target to generate assembly for a file
+src/laplacian.cpp.s:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacian.cpp.s
+.PHONY : src/laplacian.cpp.s
+
+src/laplacianfilter.o: src/laplacianfilter.cpp.o
+
+.PHONY : src/laplacianfilter.o
+
+# target to build an object file
+src/laplacianfilter.cpp.o:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacianfilter.cpp.o
+.PHONY : src/laplacianfilter.cpp.o
+
+src/laplacianfilter.i: src/laplacianfilter.cpp.i
+
+.PHONY : src/laplacianfilter.i
+
+# target to preprocess a source file
+src/laplacianfilter.cpp.i:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacianfilter.cpp.i
+.PHONY : src/laplacianfilter.cpp.i
+
+src/laplacianfilter.s: src/laplacianfilter.cpp.s
+
+.PHONY : src/laplacianfilter.s
+
+# target to generate assembly for a file
+src/laplacianfilter.cpp.s:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/laplacianfilter.cpp.s
+.PHONY : src/laplacianfilter.cpp.s
+
 src/smooth.o: src/smooth.cpp.o
 
 .PHONY : src/smooth.o
@@ -503,6 +557,12 @@ help:
 	@echo "... src/imgproc.o"
 	@echo "... src/imgproc.i"
 	@echo "... src/imgproc.s"
+	@echo "... src/laplacian.o"
+	@echo "... src/laplacian.i"
+	@echo "... src/laplacian.s"
+	@echo "... src/laplacianfilter.o"
+	@echo "... src/laplacianfilter.i"
+	@echo "... src/laplacianfilter.s"
 	@echo "... src/smooth.o"
 	@echo "... src/smooth.i"
 	@echo "... src/smooth.s"
