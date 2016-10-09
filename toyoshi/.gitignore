@@ -1,0 +1,6 @@
+Makefile
+*.so
+*.dylib
+cmake_install.cmake
+install_manifest.txt
+cv_shokyu

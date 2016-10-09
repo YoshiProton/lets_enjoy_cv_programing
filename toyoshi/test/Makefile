@@ -123,32 +123,32 @@ cv_shokyu/fast:
 	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/build
 .PHONY : cv_shokyu/fast
 
-differentTypeMatTest.o: differentTypeMatTest.cpp.o
+matAccessTest.o: matAccessTest.cpp.o
 
-.PHONY : differentTypeMatTest.o
+.PHONY : matAccessTest.o
 
 # target to build an object file
-differentTypeMatTest.cpp.o:
-	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/differentTypeMatTest.cpp.o
-.PHONY : differentTypeMatTest.cpp.o
+matAccessTest.cpp.o:
+	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/matAccessTest.cpp.o
+.PHONY : matAccessTest.cpp.o
 
-differentTypeMatTest.i: differentTypeMatTest.cpp.i
+matAccessTest.i: matAccessTest.cpp.i
 
-.PHONY : differentTypeMatTest.i
+.PHONY : matAccessTest.i
 
 # target to preprocess a source file
-differentTypeMatTest.cpp.i:
-	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/differentTypeMatTest.cpp.i
-.PHONY : differentTypeMatTest.cpp.i
+matAccessTest.cpp.i:
+	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/matAccessTest.cpp.i
+.PHONY : matAccessTest.cpp.i
 
-differentTypeMatTest.s: differentTypeMatTest.cpp.s
+matAccessTest.s: matAccessTest.cpp.s
 
-.PHONY : differentTypeMatTest.s
+.PHONY : matAccessTest.s
 
 # target to generate assembly for a file
-differentTypeMatTest.cpp.s:
-	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/differentTypeMatTest.cpp.s
-.PHONY : differentTypeMatTest.cpp.s
+matAccessTest.cpp.s:
+	$(MAKE) -f CMakeFiles/cv_shokyu.dir/build.make CMakeFiles/cv_shokyu.dir/matAccessTest.cpp.s
+.PHONY : matAccessTest.cpp.s
 
 # Help Target
 help:
@@ -159,9 +159,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... cv_shokyu"
-	@echo "... differentTypeMatTest.o"
-	@echo "... differentTypeMatTest.i"
-	@echo "... differentTypeMatTest.s"
+	@echo "... matAccessTest.o"
+	@echo "... matAccessTest.i"
+	@echo "... matAccessTest.s"
 .PHONY : help
 
 

@@ -12,10 +12,12 @@ namespace toyocv{
   private:
     cv::Mat kernel;
 
+    cv::Mat diffTypeMul(const cv::Mat &a, const cv::Mat &b);    
+
     double calcKernelOutput(const cv::Mat &src,
 			    const cv::Mat &kernel, const int &w, const int &h,
 			    const int &margineWidth, const int &margineHeight,			  
-			    const int &kernelElemCount);
+			    const double &kernelElemCount);
 
     double calcKernelOutputAtEdge(const cv::Mat &src,
 				  const cv::Mat &kernel, int w, int h,

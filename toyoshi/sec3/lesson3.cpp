@@ -28,12 +28,15 @@ int main( int argc, char** argv )
   imshow("original", image);
 
   Mat blurImage;
-  Size kernelSize(11, 11);
+  Size kernelSize(5, 5);
   blur(image, blurImage, kernelSize);
   imshow("blur", blurImage);
 
   Mat blurImageOrig;
   toyocv::blur(image, blurImageOrig, kernelSize);
+
+  blurImageOrig.convertTo(blurImageOrig, CV_8UC3);
+  
   imshow("blurorig", blurImageOrig);
 
   imshow("diff", blurImage - blurImageOrig);
@@ -49,17 +52,13 @@ int main( int argc, char** argv )
   Mat differentialx;
   Mat differentialy;
   Mat differentialxy;
-  // toyocv::differential(grayImage, differentialx, CV_16UC3, 1, 0, kernelSize2);
-  // toyocv::differential(grayImage, differentialy, CV_16UC3, 0, 1, kernelSize2);
-  // toyocv::differential(grayImage, differentialxy, CV_16UC3, 1, 1, kernelSize2);  
+  toyocv::differential(image, differentialx, CV_64F, 1, 0, kernelSize2);
+  toyocv::differential(image, differentialy, CV_64F, 0, 1, kernelSize2);
+  toyocv::differential(image, differentialxy, CV_64F, 1, 1, kernelSize2);  
 
-  toyocv::differential(grayImage, differentialx, CV_8UC1, 1, 0, kernelSize);
-  toyocv::differential(grayImage, differentialy, CV_8UC1, 0, 1, kernelSize);
-  toyocv::differential(grayImage, differentialxy, CV_8UC1, 1, 1, kernelSize);  
-  
-  imshow("diffx", differentialx);
-  imshow("diffy", differentialy);
-  imshow("diffxy", differentialxy);
+  imshow("diffx", differentialx * 100);
+  imshow("diffy", differentialy * 100);
+  imshow("diffxy", differentialxy * 100);
 
   waitKey(0);
   

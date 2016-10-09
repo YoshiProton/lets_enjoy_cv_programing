@@ -35,7 +35,8 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 link_directories("/usr/local/lib")
 
 # 実行ファイルを生成
-add_executable(cv_shokyu differentTypeMatTest.cpp)
+# add_executable(cv_shokyu differentTypeMatTest.cpp)
+add_executable(cv_shokyu matAccessTest.cpp)
 
 # ライブラリとリンクする
 target_link_libraries(cv_shokyu

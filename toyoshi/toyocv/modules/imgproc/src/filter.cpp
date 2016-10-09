@@ -3,24 +3,48 @@
 using namespace cv;
 
 namespace toyocv{
+  Mat FilterBase::diffTypeMul(const Mat &a, const Mat &b){
+    int aDepth = a.depth();
+    int bDepth = b.depth();
+
+    try{
+    
+      if(aDepth == bDepth){
+	return a.mul(b);
+      }
+
+      if(aDepth < bDepth){
+	Mat c;
+	a.convertTo(c, bDepth);
+
+	return c.mul(b);
+      }
+
+      Mat c;
+      b.convertTo(c, aDepth);
+      return b.mul(c);
+    }catch(...){
+      std::cout << "dead in diffTypeMul" << std::endl;
+    }
+  }
+  
   double FilterBase::calcKernelOutput(const Mat &src,
 				      const Mat &kernel, const int &w, const int &h,
-				      const int &margineWidth, const int &margineHeight,			  
-				      const int &kernelElemCount)
+				      const int &margineWidth, const int &margineHeight,
+				      const double &kernelElemCount)
   {
     double output = 0;
 
-    Mat subMat = src(Rect(w - margineWidth, h - margineHeight, kernel.cols, kernel.rows));
-
-    // if(kernel.type() != subMat.type())
-
-    // std::cout << kernel.type() << std::endl;
-    // std::cout << subMat.type() << std::endl;
+    try{
+      Mat subMat = src(Rect(w - margineWidth, h - margineHeight, kernel.cols, kernel.rows));
     
-    Mat mulKernel = subMat.mul(kernel);
+      Mat mulKernel = diffTypeMul(subMat, kernel);
 
-    output += (double)sum(mulKernel)[0];
-    return output / kernelElemCount;
+      output += (double)sum(mulKernel)[0];
+      return output / kernelElemCount;
+    }catch(...){
+      std::cout << "dead in calcKernelOutput" << std::endl;
+    }
   }
 
   double FilterBase::calcKernelOutputAtEdge(const Mat &src,
@@ -61,9 +85,8 @@ namespace toyocv{
       roiHeight -= diff;
       kernelRoi.height -= diff;
     }
-
     Mat subMat = src(Rect(w, h, roiWidth, roiHeight));
-    Mat mulKernel = subMat.mul(kernel(kernelRoi));
+    Mat mulKernel = diffTypeMul(subMat, kernel(kernelRoi));  //subMat.mul(kernel(kernelRoi));
 
     output += (double)sum(mulKernel)[0] / (kernelRoi.width * kernelRoi.height);
 
@@ -83,7 +106,7 @@ namespace toyocv{
 
     return false;
   }
-  
+
   void FilterBase::apply(cv::InputArray _src, cv::OutputArray _dst, const int &ddepth){
     int stype = _src.type();
     int dcn = _src.channels();
@@ -91,7 +114,7 @@ namespace toyocv{
 
     if (0 <= ddepth)
       depth = ddepth;
-      
+
     Mat src, dst;
     src = _src.getMat();
 
@@ -103,27 +126,25 @@ namespace toyocv{
     int imageWidth = src.rows;
     int imageHeight = src.cols;
 
-    // Mat kernel = Mat::ones(ksize, CV_8UC1);
-
     Mat srcChannels[3];
     split(src, srcChannels);
 
     int margineWidth = kernel.cols / 2;
     int margineHeight = kernel.rows / 2;
     double kernelElemCount = (double)(kernel.cols * kernel.rows);
-    
-    for(int ch = 0; ch < dcn; ++ch){
-      for(int x = 0; x < imageWidth; ++x){
-	for(int y = 0; y < imageHeight; ++y){
 
+    for(int ch = 0; ch < dcn; ++ch){
+      for(int y = 0; y < imageHeight; ++y){
+	Vec3d  *ptr = dst.ptr<Vec3d>(y);
+	for(int x = 0; x < imageWidth; ++x){
 	  if (isEdge(x, y, imageWidth, imageHeight, margineWidth, margineWidth)){
-	    dst.at<Vec3b>(y, x).val[ch]
+	    ptr[x][ch]
 	      = calcKernelOutputAtEdge(srcChannels[ch],
 				       kernel, x, y,
 				       imageWidth, imageHeight,
 				       margineWidth, margineHeight);
 	  }else{
-	    dst.at<Vec3b>(y, x).val[ch]
+	    ptr[x][ch]
 	      = calcKernelOutput(srcChannels[ch],
 				 kernel, x, y,
 				 margineWidth, margineHeight,				 

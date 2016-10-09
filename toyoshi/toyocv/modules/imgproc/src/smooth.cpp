@@ -8,6 +8,6 @@ namespace toyocv{
   void blur(InputArray _src, OutputArray _dst,
 	    const Size &ksize, const Point &anchor, const int &borderType){
     BoxFilter boxFilter(ksize);
-    boxFilter.apply(_src, _dst);
+    boxFilter.apply(_src, _dst, CV_64F);
   }
 }
