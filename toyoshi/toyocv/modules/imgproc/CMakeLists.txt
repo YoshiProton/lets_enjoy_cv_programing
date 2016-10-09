@@ -52,8 +52,8 @@ SET_TARGET_PROPERTIES(toyocv_imgproc PROPERTIES VERSION ${serial} SOVERSION ${so
 # 共有ライブラリのインストール指定
 # INSTALL(TARGETS toyocv_imgproc LIBRARY DESTINATION lib)
 # 共有ライブラリ用ヘッダーファイルのインストール指定
-# INSTALL(FILES ${toyocv_imgproc_include}
-#	      DESTINATION include/toyocv)
+INSTALL(FILES ${toyocv_imgproc_include}
+	      DESTINATION include/toyocv)
 if(WIN32)
   install(TARGETS toyocv_imgproc
     RUNTIME DESTINATION lib)

@@ -19,5 +19,9 @@ namespace toyocv{
 		    const int &ddepth, const int &dx, const int &dy,
 		    const cv::Size &ksize, const cv::Point &anchor = cv::Point(-1,-1),
 		    const int &borderType = cv::BORDER_DEFAULT);
+  void sobel(cv::InputArray _src, cv::OutputArray _dst,
+	     const int &ddepth, const int &dx, const int &dy,
+	     const cv::Size &ksize, const cv::Point &anchor = cv::Point(-1,-1),
+	     const int &borderType = cv::BORDER_DEFAULT);
 }
 #endif

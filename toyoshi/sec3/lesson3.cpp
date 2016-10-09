@@ -61,6 +61,18 @@ int main( int argc, char** argv )
   imshow("diffxy", differentialxy * 100);
 
   waitKey(0);
+  destroyAllWindows();
+
+  Mat sobelx;
+  Mat sobely;
+  toyocv::sobel(image, sobelx, CV_64F, 1, 0, kernelSize2);
+  toyocv::sobel(image, sobely, CV_64F, 0, 1, kernelSize2);
+
+  imshow("sobelx", sobelx * 100);
+  imshow("sobely", sobely * 100);
+
+  waitKey(0);
+  destroyAllWindows();  
   
   return 0;
 }
