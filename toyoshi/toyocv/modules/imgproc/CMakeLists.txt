@@ -8,8 +8,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2 -fpermissive -fPIC -pg")
 # デバッグビルド用オプション
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -fpermissive -fPIC")
 # ビルドのタイプはリリース
-SET(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE Debug)
+# SET(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 #set(CMAKE_CXX_FLAGS "$(CMAKE_CXX_FLAGS) -fpermissive")
 
@@ -50,7 +50,14 @@ TARGET_LINK_LIBRARIES(toyocv_imgproc ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 SET_TARGET_PROPERTIES(toyocv_imgproc PROPERTIES VERSION ${serial} SOVERSION ${soserial})
 
 # 共有ライブラリのインストール指定
-INSTALL(TARGETS toyocv_imgproc LIBRARY DESTINATION lib)
+# INSTALL(TARGETS toyocv_imgproc LIBRARY DESTINATION lib)
 # 共有ライブラリ用ヘッダーファイルのインストール指定
-INSTALL(FILES ${toyocv_imgproc_include}
-	      DESTINATION include/toyocv)
+# INSTALL(FILES ${toyocv_imgproc_include}
+#	      DESTINATION include/toyocv)
+if(WIN32)
+  install(TARGETS toyocv_imgproc
+    RUNTIME DESTINATION lib)
+else()
+  install(TARGETS toyocv_imgproc
+    LIBRARY DESTINATION lib)
+endif()

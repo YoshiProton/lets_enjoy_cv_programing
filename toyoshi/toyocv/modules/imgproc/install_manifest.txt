@@ -1,0 +1,7 @@
+/usr/local/lib/libtoyocv_imgproc.1.0.0.dylib
+/usr/local/lib/libtoyocv_imgproc.1.dylib
+/usr/local/lib/libtoyocv_imgproc.dylib
+/usr/local/include/toyocv/BilinearResizer.hpp
+/usr/local/include/toyocv/imgproc.hpp
+/usr/local/include/toyocv/NearestNeighborsResizer.hpp
+/usr/local/include/toyocv/Resizer.hpp
