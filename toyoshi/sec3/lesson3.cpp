@@ -72,6 +72,23 @@ int main( int argc, char** argv )
   imshow("sobely", sobely * 100);
 
   waitKey(0);
+  destroyAllWindows();
+
+  Size kernelSize3(11, 11);
+
+  Mat laplacian[21];
+  for (int i = 1; i < 20; ++i){
+
+    double sigma = i * 0.1;
+    
+    toyocv::laplacian(image, laplacian[i], CV_64F, kernelSize3, sigma);
+
+    std::stringstream   windowName;
+    windowName << "laplacian sigma " << sigma;
+    imshow(windowName.str(), laplacian[i] * 100);
+  }
+
+  waitKey(0);
   destroyAllWindows();  
   
   return 0;
