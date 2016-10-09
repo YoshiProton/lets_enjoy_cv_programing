@@ -412,6 +412,60 @@ src/smooth.cpp.s:
 	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/smooth.cpp.s
 .PHONY : src/smooth.cpp.s
 
+src/sobel.o: src/sobel.cpp.o
+
+.PHONY : src/sobel.o
+
+# target to build an object file
+src/sobel.cpp.o:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobel.cpp.o
+.PHONY : src/sobel.cpp.o
+
+src/sobel.i: src/sobel.cpp.i
+
+.PHONY : src/sobel.i
+
+# target to preprocess a source file
+src/sobel.cpp.i:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobel.cpp.i
+.PHONY : src/sobel.cpp.i
+
+src/sobel.s: src/sobel.cpp.s
+
+.PHONY : src/sobel.s
+
+# target to generate assembly for a file
+src/sobel.cpp.s:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobel.cpp.s
+.PHONY : src/sobel.cpp.s
+
+src/sobelfilter.o: src/sobelfilter.cpp.o
+
+.PHONY : src/sobelfilter.o
+
+# target to build an object file
+src/sobelfilter.cpp.o:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobelfilter.cpp.o
+.PHONY : src/sobelfilter.cpp.o
+
+src/sobelfilter.i: src/sobelfilter.cpp.i
+
+.PHONY : src/sobelfilter.i
+
+# target to preprocess a source file
+src/sobelfilter.cpp.i:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobelfilter.cpp.i
+.PHONY : src/sobelfilter.cpp.i
+
+src/sobelfilter.s: src/sobelfilter.cpp.s
+
+.PHONY : src/sobelfilter.s
+
+# target to generate assembly for a file
+src/sobelfilter.cpp.s:
+	cd /Users/masahiko/Programs/lets_enjoy_cv_programing/toyoshi/toyocv && $(MAKE) -f modules/imgproc/CMakeFiles/toyocv_imgproc.dir/build.make modules/imgproc/CMakeFiles/toyocv_imgproc.dir/src/sobelfilter.cpp.s
+.PHONY : src/sobelfilter.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -452,6 +506,12 @@ help:
 	@echo "... src/smooth.o"
 	@echo "... src/smooth.i"
 	@echo "... src/smooth.s"
+	@echo "... src/sobel.o"
+	@echo "... src/sobel.i"
+	@echo "... src/sobel.s"
+	@echo "... src/sobelfilter.o"
+	@echo "... src/sobelfilter.i"
+	@echo "... src/sobelfilter.s"
 .PHONY : help
 
 
