@@ -1,7 +1,8 @@
-CMakeCache.txt
-CMakeFiles/
 Makefile
+*.so
+*.dylib
 cmake_install.cmake
 install_manifest.txt
-lib*
 cv_shokyu
+#*
+.#*
