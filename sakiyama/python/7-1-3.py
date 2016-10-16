@@ -3,17 +3,8 @@
 import cv2
 import numpy as np
 import math
+import sys
 
-def loadImg(fileName, flags = 1):
-    img = cv2.imread(fileName, flags)
-    if(len(img.shape) == 2):
-        rows, cols = img.shape
-    else:
-        rows, cols, depth = img.shape
-    if rows == 0 or cols == 0:
-        print "invalid input_file_full_path : " + fileName
-        exit()
-    return img
 
 def imshowOnFFT(title, img):
     a = np.log(np.abs(img) ** 2)
