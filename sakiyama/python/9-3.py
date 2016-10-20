@@ -20,17 +20,15 @@ if __name__ == '__main__':
         thin_img = util.ImageProcessing.thinning(th_img)
         # セグメント処理 9-3-3
         seg_img = util.ImageProcessing.segment(thin_img)
-        thin_color_img = cv2.cvtColor(thin_img, cv2.COLOR_GRAY2BGR)
-        thin_color_img = seg_img if seg_img != [0,0,0] else thin_color_img
         # ベクトル化 9-3-4
+        # 間に合いませんでした
 
-        # print [255 if v == 2 else 0 for inner_list in koritsu_img for v in inner_list]
-
-        cv2.imshow("org", img)
-        cv2.imshow("gray", gray_img)
-        cv2.imshow("th", th_img)
-        cv2.imshow("thin", thin_img)
-        cv2.imshow("seg", thin_color_img)
-        cv2.waitKey()
+        cv2.imwrite("gray.jpg", gray_img)
+        cv2.imwrite("thresh.jpg", th_img)
+        cv2.imwrite("thining.jpg", thin_img)
+        disp_seg_img = np.zeros((seg_img.shape[0], seg_img.shape[1], 3), np.uint8)
+        for point in np.argwhere(seg_img != [0,0,0]):
+            cv2.circle(disp_seg_img, (point[1], point[0]), 5, seg_img[point[0], point[1]].tolist(), -1)
+        cv2.imwrite("segment.jpg", disp_seg_img)
     except Exception as e:
         print str(e)
