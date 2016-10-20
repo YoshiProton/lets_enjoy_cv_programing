@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 from scipy import weave
+import const
 import math
 import sys
 
@@ -35,10 +36,7 @@ class ImageProcessing:
                 int B  = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
                 int m1 = iter == 0 ? (p2 * p4 * p6) : (p2 * p4 * p8);
                 int m2 = iter == 0 ? (p4 * p6 * p8) : (p2 * p6 * p8);
-                if (A == 1 &&
-                B >= 2 && B <= 6 &&
-                m1 == 0 && m2 == 0
-                ) {
+                if (A == 1 && B >= 2 && B <= 6 && m1 == 0 && m2 == 0) {
                     M2(i,j) = 1;
                 }
             }
@@ -68,13 +66,41 @@ class ImageProcessing:
         return dst * 255
 
     @classmethod
-    def segment(cls, thin_img):
-        pass
-
-    @classmethod
     def loadImg(cls, fileName, flags=1):
         img = cv2.imread(fileName, flags)
         if img is None:
             print "invalid input_file_full_path : " + fileName
             exit()
         return img
+
+    @classmethod
+    def segment(cls, img):
+
+        bin_img = img / 255
+
+        seg_img = np.zeros((img.shape[0],img.shape[1],3)).astype(np.uint8)
+
+        for v in const.SEGMENT_LIST:
+
+            color, segment_list = v
+
+            for segment in segment_list:
+
+                rows, cols = bin_img.shape
+
+                #ここが古典的なフィルタリングのforで気持ち悪い
+                for row in range(1, rows - 1):
+                    for col in range(1, cols - 1):
+
+                        v = 0
+
+                        for i in range(3):
+                            for j in range(3):
+
+                                if segment[i, j] == const.SEG_NO_CHECK_VALUE or \
+                                                segment[i, j] == bin_img[row + i - 1, col + j - 1]:
+                                    v += 1
+
+                        if v == 9:
+                            seg_img[row, col] = color
+        return seg_img
