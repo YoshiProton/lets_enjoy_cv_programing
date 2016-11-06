@@ -28,5 +28,8 @@ namespace toyocv{
 		 const cv::Size &ksize, const double &sigma,
 		 const cv::Point &anchor  = cv::Point(-1,-1),
 		 const int &borderType = cv::BORDER_DEFAULT);
+  void bilateral(cv::InputArray _src, cv::OutputArray _dst,
+		 const int &ddepth, const int &dx, const int &dy,
+		 const cv::Size &ksize, const cv::Point &anchor, const int &borderType);
 }
 #endif
