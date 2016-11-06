@@ -236,25 +236,23 @@ int main( int argc, char** argv )
   drawSiftMatch(images, corners, origDmatch);
 
   // test opencv findHomography
-  {
-    std::vector< Point2f > obj;
-    std::vector< Point2f > scene;
-    for(int i = 0; i < origDmatch.size(); ++i){
-      obj.push_back( corners[0][ origDmatch[i].queryIdx ].pt );
-      scene.push_back( corners[1][ origDmatch[i].trainIdx ].pt );      
-    }
-    Mat H = findHomography( obj, scene, CV_RANSAC );
+  // {
+  //   std::vector< Point2f > obj;
+  //   std::vector< Point2f > scene;
+  //   for(int i = 0; i < origDmatch.size(); ++i){
+  //     obj.push_back( corners[0][ origDmatch[i].queryIdx ].pt );
+  //     scene.push_back( corners[1][ origDmatch[i].trainIdx ].pt );      
+  //   }
+  //   Mat H = findHomography( obj, scene, CV_RANSAC );
 
-    std::cout << H << std::endl;
-    
-    // Use the Homography Matrix to warp the images
-    cv::Mat result;
-    warpPerspective(images[0], result, H, cv::Size(images[0].cols+images[1].cols,images[0].rows));
-    cv::Mat half(result,cv::Rect(0,0,images[1].cols,images[1].rows));
-    images[1].copyTo(half);
-    imshow( "Result", result );
-    waitKey(0);
-  }
+  //   // Use the Homography Matrix to warp the images
+  //   cv::Mat result;
+  //   warpPerspective(images[0], result, H, cv::Size(images[0].cols+images[1].cols,images[0].rows));
+  //   cv::Mat half(result,cv::Rect(0,0,images[1].cols,images[1].rows));
+  //   images[1].copyTo(half);
+  //   imshow( "Result", result );
+  //   waitKey(0);
+  // }
   
 
   std::vector<Mat> hVec(ransacTrial);
@@ -279,8 +277,6 @@ int main( int argc, char** argv )
 
       double res = cv::norm(p2 - reprojectedPoint);
 
-      cout << res << endl;
-
       if (res < 10.0){
 	inliers++;
       }
@@ -290,7 +286,6 @@ int main( int argc, char** argv )
       maxInliers = inliers;
       maxIdx = i;
     }
-    cout << maxInliers << endl;    
   }
 
   if (maxIdx < 0){

@@ -22,7 +22,7 @@ vector<KeyPoint> CornerDetector::detectCorners(const Mat &src){
   const int apertureSize = 3;
   // const double k = 0.04;
   const double k = 0.1;
-  const int thresh = 180;
+  const int thresh = 150;
 
   cornerHarris( src_gray, dst, blockSize, apertureSize, k, BORDER_DEFAULT );
 
