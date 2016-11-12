@@ -21,14 +21,14 @@ class ImageProcessing:
         expr = """
         for (int i = 1; i < NI[0]-1; i++) {
             for (int j = 1; j < NI[1]-1; j++) {
-                int p2 = I2(i-1, j);
-                int p3 = I2(i-1, j+1);
-                int p4 = I2(i, j+1);
-                int p5 = I2(i+1, j+1);
-                int p6 = I2(i+1, j);
-                int p7 = I2(i+1, j-1);
-                int p8 = I2(i, j-1);
-                int p9 = I2(i-1, j-1);
+                int p2 = I2(i-1, j); //左
+                int p3 = I2(i-1, j+1); //左下
+                int p4 = I2(i, j+1); //下
+                int p5 = I2(i+1, j+1); //右下
+                int p6 = I2(i+1, j);//右
+                int p7 = I2(i+1, j-1);//右上
+                int p8 = I2(i, j-1);//上
+                int p9 = I2(i-1, j-1);//左上
                 int A  = (p2 == 0 && p3 == 1) + (p3 == 0 && p4 == 1) +
                          (p4 == 0 && p5 == 1) + (p5 == 0 && p6 == 1) +
                          (p6 == 0 && p7 == 1) + (p7 == 0 && p8 == 1) +
@@ -43,6 +43,9 @@ class ImageProcessing:
         }
         """
 
+        #第１引数 C言語のコード
+        #第２引数 args=[]のオプション引数であり、Cのコード内に渡したいPython側の変数名を文字列のリストとして渡す
+        # この場合 IとMは画像サイズ, iterは0/1
         weave.inline(expr, ["I", "iter", "M"])
 
         return (I & ~M)
