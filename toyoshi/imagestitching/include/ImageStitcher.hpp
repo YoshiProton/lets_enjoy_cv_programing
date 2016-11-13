@@ -4,7 +4,13 @@
 #include <opencv2/opencv.hpp>
 
 
-class ImageSticher{
+class ImageStitcher{
+public:
+  cv::Mat stitch(const cv::Mat* images);
+
+private:
+  const uint ransacTrial = 1000;
+  
   cv::Mat descriptFeatures(const cv::Mat &image, std::vector<cv::KeyPoint> &corners);
   std::vector<cv::DMatch> calcSiftMatch(const cv::Mat *descriptors);
   cv::Mat createEquationA(std::vector<cv::DMatch> DMatch,
@@ -17,6 +23,8 @@ class ImageSticher{
 						    const std::vector<int> &index);
   cv::Mat solve(const std::vector<cv::DMatch> &origDmatch,
 		const std::vector<cv::KeyPoint> *corners);
+
+
 };
 
 #endif

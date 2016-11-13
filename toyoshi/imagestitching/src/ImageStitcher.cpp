@@ -1,9 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <opencv2/opencv.hpp>
+#include "ImageStitcher.hpp"
+
 #include <opencv2/nonfree/nonfree.hpp>
 #include <toyocv/imgproc.hpp>
-#include <chrono>
 
 #include <random>
 #include <cstdint>
@@ -14,29 +12,15 @@
 #include <limits>
 #include <type_traits>
 
-#include <limits>
-
+#include "UniqueRandomSampler.hpp"
 #include "CornerDetector.hpp"
 
 using namespace std;
 using namespace cv;
 
 const uint imageCount = 2;
-const uint ransacTrial = 1000;
 
-
-void drawAndShowImage(const Mat &image, const vector<KeyPoint> &corners){
-  Mat tmpImage;
-  image.copyTo(tmpImage);
-  for(uint i = 0; i < corners.size(); ++i)
-    circle(tmpImage, corners[i].pt, 5,  Scalar(0, 255, 0), -1, 8, 0 );    
-
-  imshow("corner detection", tmpImage);
-  waitKey(0);
-  destroyAllWindows();
-}
-
-Mat descriptFeatures(const Mat &image, vector<KeyPoint> &corners){
+Mat ImageStitcher::descriptFeatures(const Mat &image, vector<KeyPoint> &corners){
   initModule_nonfree(); 
   Ptr<DescriptorExtractor> extractor = cv::DescriptorExtractor::create("SIFT");
   Mat descriptor;
@@ -45,26 +29,16 @@ Mat descriptFeatures(const Mat &image, vector<KeyPoint> &corners){
   return descriptor;
 }
 
-std::vector<cv::DMatch> calcSiftMatch(const Mat *descriptors){
-  cv::Ptr<DescriptorMatcher> matcher = cv::DescriptorMatcher::create("FlannBased");
-  std::vector<cv::DMatch> dmatch;
+vector<DMatch> ImageStitcher::calcSiftMatch(const Mat *descriptors){
+  Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("FlannBased");
+  vector<DMatch> dmatch;
   
   matcher->match(descriptors[0], descriptors[1], dmatch);
 
   return dmatch;
 }
 
-void drawSiftMatch(const Mat *images,
-		   const vector<KeyPoint> *corners,
-		   const std::vector<cv::DMatch> &dmatch){
-  cv::Mat result;
-  cv::drawMatches(images[0], corners[0], images[1], corners[1], dmatch, result);
-  cv::imshow("matching", result);
-  waitKey(0);
-  destroyAllWindows();
-}
-
-Mat createEquationA(std::vector<cv::DMatch> dmatch, const vector<KeyPoint> *corners){
+Mat ImageStitcher::createEquationA(vector<cv::DMatch> dmatch, const vector<KeyPoint> *corners){
   uint matchCount = dmatch.size();
   Mat A = Mat::zeros(Size(8, matchCount * 2), CV_32FC1);
   for (uint i = 0; i < matchCount; ++i){
@@ -91,7 +65,7 @@ Mat createEquationA(std::vector<cv::DMatch> dmatch, const vector<KeyPoint> *corn
   return A;
 }
 
-Mat createEquationb(std::vector<cv::DMatch> dmatch, const vector<KeyPoint> *corners){
+Mat ImageStitcher::createEquationb(vector<DMatch> dmatch, const vector<KeyPoint> *corners){
   uint matchCount = dmatch.size();
   Mat bt = Mat::zeros(Size(matchCount * 2, 1), CV_32FC1);
 
@@ -107,42 +81,7 @@ Mat createEquationb(std::vector<cv::DMatch> dmatch, const vector<KeyPoint> *corn
   return bt.t();
 }
 
-
-std::mt19937 create_rand_engine(){
-  std::random_device rnd;
-  std::vector<std::uint_least32_t> v(10);// 初期化用ベクタ
-  std::generate(v.begin(), v.end(), std::ref(rnd));// ベクタの初期化
-  std::seed_seq seed(v.begin(), v.end());
-  return std::mt19937(seed);// 乱数エンジン
-}
-
-std::vector<int> make_rand_array_unique(const int size, int rand_min, int rand_max){
-  if(rand_min > rand_max) std::swap(rand_min, rand_max);
-  const int max_min_diff = static_cast<int>(rand_max - rand_min + 1);
-  if(max_min_diff < size) throw std::runtime_error("引数が異常です");
-
-  std::vector<int> tmp;
-  auto engine = create_rand_engine();
-  std::uniform_int_distribution<int> distribution(rand_min, rand_max);
-
-  const int make_size = static_cast<int>(size*1.2);
-
-  while(tmp.size() < size){
-    while(tmp.size() < make_size) tmp.push_back(distribution(engine));
-    std::sort(tmp.begin(), tmp.end());
-    auto unique_end = std::unique(tmp.begin(), tmp.end());
-
-    if(size < std::distance(tmp.begin(), unique_end)){
-      unique_end = std::next(tmp.begin(), size);
-    }
-    tmp.erase(unique_end, tmp.end());
-  }
-
-  std::shuffle(tmp.begin(), tmp.end(), engine);
-  return std::move(tmp);
-}
-
-Mat solveEquation(const Mat &A, const Mat &b){
+Mat ImageStitcher::solveEquation(const Mat &A, const Mat &b){
   Mat tmp1 = A.t() * A;
 
   Mat tmp2 = tmp1.inv(cv::DECOMP_SVD);
@@ -155,7 +94,7 @@ Mat solveEquation(const Mat &A, const Mat &b){
   return h.reshape(1, 3);
 }
 
-Mat selectRows(const Mat &src, const vector<int> &rand_array){
+Mat ImageStitcher::selectRows(const Mat &src, const vector<int> &rand_array){
   Mat dst = src.row(rand_array[0]);
 
   for(uint i = 1; i < rand_array.size(); ++i){
@@ -165,7 +104,7 @@ Mat selectRows(const Mat &src, const vector<int> &rand_array){
   return dst;
 }
 
-template <typename T> vector<T> selectVector(const vector<T> &src, const vector<int> &index){
+template <typename T> vector<T> ImageStitcher::selectVector(const vector<T> &src, const vector<int> &index){
   vector<T> dst;
   for(uint i = 0; i < index.size(); ++i){
     dst.push_back(src[index[i]]);
@@ -173,9 +112,13 @@ template <typename T> vector<T> selectVector(const vector<T> &src, const vector<
   return dst;
 }
 
-Mat solve(const std::vector<cv::DMatch> &origDmatch, const vector<KeyPoint> *corners){
+Mat ImageStitcher::solve(const std::vector<cv::DMatch> &origDmatch,
+			const vector<KeyPoint> *corners){
   uint matchCount = origDmatch.size();
-  std::vector<int> rand_array = make_rand_array_unique(4, 0, matchCount - 1);
+
+  UniqueRandomSampler uniqueRandomSampler;
+  
+  std::vector<int> rand_array = uniqueRandomSampler.make_rand_array_unique(4, 0, matchCount - 1);
 
   vector<cv::DMatch> dmatch = selectVector<cv::DMatch>(origDmatch, rand_array);
 
@@ -189,32 +132,17 @@ Mat solve(const std::vector<cv::DMatch> &origDmatch, const vector<KeyPoint> *cor
   return h;
 }
 
-int main( int argc, char** argv )
-{
-  if( argc != imageCount + 1)
-    {
-      cout <<" Usage: cv_shokyu image1 image2" << endl;
-      return -1;
-    }
 
-  Mat images[imageCount];
-  for(uint i = 0; i < imageCount; ++i)
-    images[i] = imread(argv[i+1], CV_LOAD_IMAGE_COLOR);
-
-  if(!images[0].data || !images[imageCount].data){
-    cout <<  "Could not open or find the image" << std::endl ;
-    return -1;
-  }
-
-  // Detect corners
+Mat ImageStitcher::stitch(const Mat* images){
+    // Detect corners
   CornerDetector cornerDetector;
   vector<KeyPoint> corners[imageCount];
   for(uint i = 0; i < imageCount; ++i)
     corners[i] = cornerDetector.detectCorners(images[i]);
 
   // Draw detected corners
-  for(uint i = 0; i < imageCount; ++i)
-    drawAndShowImage(images[i], corners[i]);
+  // for(uint i = 0; i < imageCount; ++i)
+  //   drawAndShowImage(images[i], corners[i]);
 
   // descript sift feature
   Mat descriptors[imageCount];
@@ -233,7 +161,7 @@ int main( int argc, char** argv )
 	    [&](DMatch x) -> bool{
 	      return x.distance > minDist * 3;
 	    });
-  drawSiftMatch(images, corners, origDmatch);
+  // drawSiftMatch(images, corners, origDmatch);
 
   // test opencv findHomography
   // {
@@ -253,7 +181,6 @@ int main( int argc, char** argv )
   //   imshow( "Result", result );
   //   waitKey(0);
   // }
-  
 
   std::vector<Mat> hVec(ransacTrial);
   int maxIdx = -1;
@@ -290,7 +217,7 @@ int main( int argc, char** argv )
 
   if (maxIdx < 0){
     std::cout << "not found" << std::endl;
-    return 0;
+    throw 1;
   }
 
   // homogeneous transformation
@@ -304,9 +231,5 @@ int main( int argc, char** argv )
   cv::Mat half(transformedImage, cv::Rect(0, 0, images[1].cols, images[1].rows));
   images[1].copyTo(half);
 
-  // show result
-  cv::imshow("image", transformedImage);
-  cv::waitKey(0);
-
-  return 0;
+  return transformedImage;
 }
