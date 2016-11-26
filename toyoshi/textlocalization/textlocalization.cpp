@@ -24,6 +24,7 @@ int main( int argc, char** argv )
   TextDetector textDetector;
 
   Mat result = textDetector.detectText(image);
+  Mat result2 = textDetector.mser(image);
 
   // show result
   cv::imshow("image", image);
