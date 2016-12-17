@@ -14,8 +14,12 @@ private:
   int const max_type = 4;
   int const max_BINARY_value = 255;
 
-  int thresh = 100;
+  int thresh = 150;
   int max_thresh = 255;
+
+  std::vector<std::vector<cv::Point> > calcContours(const cv::Mat &image);
+
+  cv::Point2f calcCenterPoint(std::vector<cv::Point> cont);
 };
 
 #endif
