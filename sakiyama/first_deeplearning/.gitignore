@@ -1,0 +1,9 @@
+.DS_Store
+.bash_history
+prgm/.ipynb_checkpoints
+prgm/cache
+prgm/data
+prgm/misc
+cache
+data
+misc
