@@ -25,19 +25,22 @@ class ImageData():
         self.train_index = np.random.permutation(self.train_index)
 
     def split_train_val(self, train_size):
-        self.train_index = np.random.choice(self.index, train_size, replace=False)
-        self.val_index = np.array([i for i in self.index if i not in self.train_index])
+        self.train_index = np.random.choice(
+            self.index, train_size, replace=False)
+        self.val_index = np.array(
+            [i for i in self.index if i not in self.train_index]
+        )
         self.split = True
 
-    def generate_minibatch(self, batchsize, img_size = 224, mode = None):
+    def generate_minibatch(self, batchsize, img_size=224, mode=None):
         i = 0
         if mode == 'train':
-            assert self.split == True
+            assert self.split
             meta_data = self.meta_data.ix[self.train_index]
             index = self.train_index
 
         elif mode == 'val':
-            assert self.split == True
+            assert self.split
             meta_data = self.meta_data.ix[self.val_index]
             index = self.val_index
 
@@ -53,7 +56,7 @@ class ImageData():
                 image = image.resize((img_size, img_size))
                 images.append(np.array(image))
             images = np.array(images)
-            images = images.transpose((0,3,1,2))
+            images = images.transpose((0, 3, 1, 2))
             images = images.astype(np.float32)
 
             if 'category_id' in data.columns:
@@ -68,11 +71,11 @@ class ImageData():
 class Alex(Chain):
     def __init__(self):
         super(Alex, self).__init__(
-            conv1=L.Convolution2D(3,  96, 11, stride=4),
-            conv2=L.Convolution2D(96, 256,  5, pad=2),
-            conv3=L.Convolution2D(256, 384,  3, pad=1),
-            conv4=L.Convolution2D(384, 384,  3, pad=1),
-            conv5=L.Convolution2D(384, 256,  3, pad=1),
+            conv1=L.Convolution2D(3, 96, 11, stride=4),
+            conv2=L.Convolution2D(96, 256, 5, pad=2),
+            conv3=L.Convolution2D(256, 384, 3, pad=1),
+            conv4=L.Convolution2D(384, 384, 3, pad=1),
+            conv5=L.Convolution2D(384, 256, 3, pad=1),
             fc6=L.Linear(9216, 4096),
             fc7=L.Linear(4096, 4096),
             fc8=L.Linear(4096, 25),
@@ -86,12 +89,13 @@ class Alex(Chain):
             F.relu(self.conv2(h))), 3, stride=2)
         h = F.relu(self.conv3(h))
         h = F.relu(self.conv4(h))
-        h = F.max_pooling_2d(F.relu(self.conv5(h)), 3, stride = 2)
+        h = F.max_pooling_2d(F.relu(self.conv5(h)), 3, stride=2)
         h = F.dropout(F.relu(self.fc6(h)), train=self.train)
         h = F.dropout(F.relu(self.fc7(h)), train=self.train)
         y = self.fc8(h)
 
         return y
+
 
 class Classifier(Chain):
     def __init__(self, predictor):
@@ -105,7 +109,11 @@ class Classifier(Chain):
         return self.loss
 
 
-def train_val(train_data, classifier, optimizer, num_train = 9000, epochs = 10, batchsize = 30, gpu = True):
+def train_val(train_data,
+              classifier,
+              optimizer,
+              num_train=9000,
+              epochs = 10, batchsize = 30, gpu = True):
     # split data to train and val
     train_data.split_train_val(num_train)
 
@@ -319,7 +327,9 @@ def main():
     optimizer.setup(classifier)
     optimizer.add_hook(chainer.optimizer.WeightDecay(0.0001))
 
-    train_data = ImageData('data/clf_train_images_1', 'data/clf_train_master.tsv')
+    train_data = ImageData(
+        'data/clf_train_images_1',
+        'data/clf_train_master.tsv')
     test_data = ImageData('data/clf_test_images_1', 'clf_test.tsv')
 
     classifier, optimizer = train_val(train_data, classifier, optimizer)
