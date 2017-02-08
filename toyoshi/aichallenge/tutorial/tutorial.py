@@ -113,7 +113,7 @@ def train_val(train_data,
               classifier,
               optimizer,
               num_train=9000,
-              epochs = 10, batchsize = 30, gpu = True):
+              epochs=10, batchsize=30, gpu=True):
     # split data to train and val
     train_data.split_train_val(num_train)
 
@@ -241,7 +241,7 @@ def train_val(train_data, classifier, optimizer, num_train = 9000, epochs = 10, 
     return classifier, optimizer
 
 
-def predict(test_data, classifier, batchsize = 5, gpu = False):
+def predict(test_data, classifier, batchsize = 5, gpu = True):
     if gpu:
         classifier.predictor.to_gpu()
     else:
@@ -320,20 +320,34 @@ def main():
     model_path = download_model('alexnet')
     func = caffe.CaffeFunction(model_path)
     alex = Alex()
+
     copy_model(func, alex)
+
     # alex.to_gpu()
     classifier = Classifier(alex)
     optimizer = optimizers.MomentumSGD(lr=0.0005)
     optimizer.setup(classifier)
     optimizer.add_hook(chainer.optimizer.WeightDecay(0.0001))
 
+    print("alex init done.")
+
     train_data = ImageData(
         'data/clf_train_images_1',
         'data/clf_train_master.tsv')
-    test_data = ImageData('data/clf_test_images_1', 'clf_test.tsv')
+    test_data = ImageData(
+        'data/clf_test_images_1',
+        'data/clf_test.tsv')
+
+    print("data load done.")
 
     classifier, optimizer = train_val(train_data, classifier, optimizer)
+
+    print("train done.")
+    
     p = predict(test_data, classifier)
+
+    print("predict done.")
+    
     pd.DataFrame(p.argmax(axis=1)).to_csv('sample_submit.csv', header=None)
 
 
